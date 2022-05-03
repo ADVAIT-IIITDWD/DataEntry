@@ -1,0 +1,971 @@
+create schema vehicle;
+show schemas;
+use vehicle;
+drop database vehicle;
+CREATE TABLE `vehicle`.`ADVAIT_customer` (
+  `cust_id` VARCHAR(20),
+  `cust_fname` VARCHAR(45) NOT NULL,
+  `cust_lname` VARCHAR(45) NOT NULL,
+  `cust_dob` DATE NOT NULL,
+  `cust_gender` CHAR(2) NOT NULL,
+  `cust_address` VARCHAR(45) NOT NULL,
+  `cust_mob_number` INT NOT NULL UNIQUE,
+  `cust_email` VARCHAR(45) NOT NULL UNIQUE,
+  `cust_passport_num` VARCHAR(45) NOT NULL UNIQUE,
+  `cust_maritial_status` VARCHAR(45) NOT NULL,
+  `cust_pps_number` INT NOT NULL UNIQUE,
+  PRIMARY KEY (`cust_id`),
+  UNIQUE INDEX `cust_id_UNIQUE` (`cust_id` ASC) VISIBLE);--covered under pk
+
+CREATE TABLE `vehicle`.`ADVAIT_application` (
+  `application_id` VARCHAR(20),
+  `cust_id` VARCHAR(20) NOT NULL,
+  `vehicle_id` VARCHAR(45) NOT NULL ,
+  `application_status` CHAR(8) NOT NULL,
+  `coverage` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`application_id`),
+  UNIQUE INDEX `application_id_UNIQUE` (`application_id` ASC) VISIBLE,
+  UNIQUE INDEX `cust_id_UNIQUE` (`cust_id` ASC) VISIBLE);
+  
+alter table `vehicle`.`ADVAIT_application` add
+constraint fk_cust_id foreign key (`cust_id`) references `vehicle`.`ADVAIT_customer`(`cust_id`);
+
+
+CREATE TABLE `ADVAIT_quote` (
+  `quote_id` VARCHAR(20) UNIQUE,
+  `application_id` VARCHAR(20) NOT NULL ,
+  `cust_id` VARCHAR(20) NOT NULL ,
+  `issue_date` DATETIME NOT NULL,
+  `valid_from_date` DATETIME NOT NULL,
+  `valid_till_date` DATETIME NOT NULL,
+  `description` VARCHAR(100) NULL,
+  `product_id` VARCHAR(20) NOT NULL,
+  `coverage_level` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`quote_id`),
+  UNIQUE INDEX `quote_id_UNIQUE` (`quote_id` ASC) VISIBLE,
+  UNIQUE INDEX `application_id_UNIQUE` (`application_id` ASC) VISIBLE,
+  UNIQUE INDEX `cust_id_UNIQUE` (`cust_id` ASC) VISIBLE);
+  
+
+alter table `vehicle`.`ADVAIT_quote` add
+constraint fk_application_id foreign key (`application_id`) references `vehicle`.`ADVAIT_application`(`application_id`); 
+
+alter table `vehicle`.`ADVAIT_quote` add
+constraint fk_cust_id1 foreign key (`cust_id`) references `vehicle`.`ADVAIT_customer`(`cust_id`);  
+
+
+
+CREATE TABLE `vehicle`.`ADVAIT_insurance_policy` (
+  `agreement_id` VARCHAR(20),
+  `application_id` VARCHAR(20) NOT NULL,
+  `cust_id` VARCHAR(20) NOT NULL,
+  `department_name` VARCHAR(20) NOT NULL,
+  `policy_number` VARCHAR(20) NOT NULL UNIQUE,
+  `start_date` DATETIME NOT NULL,
+  `expiry_date` DATETIME NOT NULL,
+  `term_condition_description` VARCHAR(100) NULL,
+  PRIMARY KEY (`agreement_id`),
+  UNIQUE INDEX `agreement_id_UNIQUE` (`agreement_id` ASC) VISIBLE,
+  UNIQUE INDEX `application_id_UNIQUE` (`application_id` ASC) VISIBLE,
+  UNIQUE INDEX `cust_id_UNIQUE` (`cust_id` ASC) VISIBLE);
+  
+alter table `vehicle`.`ADVAIT_insurance_policy` add
+constraint fk_application_id2 foreign key (`application_id`) references `vehicle`.`ADVAIT_application`(`application_id`); 
+
+alter table `vehicle`.`ADVAIT_insurance_policy` add
+constraint fk_cust_id2 foreign key (`cust_id`) references `vehicle`.`ADVAIT_customer`(`cust_id`);  
+
+
+CREATE TABLE `ADVAIT_premium_payment` (
+  `premium_payment_id` VARCHAR(20) NOT NULL,
+  `cust_id` VARCHAR(20) NOT NULL,
+  `policy_number` VARCHAR(20) NOT NULL UNIQUE,
+  `premium_payment_schedule` DATETIME NOT NULL,
+  `premium_payment_amount` INT NOT NULL,
+  `receipt_id` VARCHAR(20) NOT NULL UNIQUE,
+  UNIQUE INDEX `premium_payment_id_UNIQUE` (`premium_payment_id` ASC) VISIBLE,
+  PRIMARY KEY (`premium_payment_id`),
+  UNIQUE INDEX `cust_id_UNIQUE` (`cust_id` ASC) VISIBLE);
+  
+alter table `vehicle`.`ADVAIT_premium_payment` add
+constraint fk_cust_id3 foreign key (`cust_id`) references `vehicle`.`ADVAIT_customer`(`cust_id`);
+
+
+
+CREATE TABLE `ADVAIT_vehicle` (
+  `vehicle_id` VARCHAR(20),
+  `cust_id` VARCHAR(20) NOT NULL,
+  `policy_id` VARCHAR(20) NOT NULL UNIQUE,
+  `dependent_nok_id` VARCHAR(20) NOT NULL ,
+  `vehicle_registration_number` VARCHAR(20) NOT NULL UNIQUE,
+  `vehicle_value` INT NOT NULL,
+  `vehicle_type` VARCHAR(20) NOT NULL,
+  `vehicle_size` INT NOT NULL,
+  `vehicle_number_of_seat` INT NOT NULL,
+  `vehicle_manufacturer` VARCHAR(20) NOT NULL,
+  `vehicle_engine_number` INT NOT NULL UNIQUE,
+  `vehicle_chasis_number` INT NOT NULL UNIQUE,
+  `vehicle_number` VARCHAR(20) NOT NULL UNIQUE,
+  `vehicle_model_number` VARCHAR(20) NOT NULL,
+  PRIMARY KEY (`vehicle_id`),
+  UNIQUE INDEX `vehicle_id_UNIQUE` (`vehicle_id` ASC) VISIBLE,
+  UNIQUE INDEX `cust_id_UNIQUE` (`cust_id` ASC) VISIBLE);
+  
+
+alter table `vehicle`.`ADVAIT_vehicle` add
+constraint fk_cust_id4 foreign key (`cust_id`) references `vehicle`.`ADVAIT_customer`(`cust_id`);
+
+
+CREATE TABLE `vehicle`.`ADVAIT_claim` (
+  `claim_id` VARCHAR(20),
+  `cust_id` VARCHAR(20) NOT NULL,
+  `agreement_id` VARCHAR(20) NOT NULL,
+  `claim_amount` INT NOT NULL,
+  `incident_id` VARCHAR(20) NOT NULL UNIQUE,
+  `damage_type` VARCHAR(20) NOT NULL,
+  `date_of_claim` DATE NOT NULL,
+  `calim_status` CHAR(10) NOT NULL,
+  PRIMARY KEY (`claim_id`),
+  UNIQUE INDEX `claim_id_UNIQUE` (`claim_id` ASC) VISIBLE,
+  UNIQUE INDEX `cust_id_UNIQUE` (`cust_id` ASC) VISIBLE);
+
+
+alter table `vehicle`.`ADVAIT_claim` add
+constraint fk_cust_id5 foreign key (`cust_id`) references `vehicle`.`ADVAIT_customer`(`cust_id`);
+
+
+CREATE TABLE `vehicle`.`ADVAIT_claim_statement` (
+  `claim_statement_id` VARCHAR(20),
+  `claim_id` VARCHAR(20) NOT NULL,
+  `cust_id` VARCHAR(20) NOT NULL,
+  `vehicle_id` VARCHAR(20) NOT NULL,
+  `date_settled` DATE NOT NULL,
+  `amount_paid` INT NOT NULL,
+  `coverage_id` VARCHAR(20) NOT NULL,
+  PRIMARY KEY (`claim_statement_id`),
+  UNIQUE INDEX `claim_statement_id_UNIQUE` (`claim_statement_id` ASC) VISIBLE,
+  UNIQUE INDEX `claim_id_UNIQUE` (`claim_id` ASC) VISIBLE,
+  UNIQUE INDEX `cust_id_UNIQUE` (`cust_id` ASC) VISIBLE);
+
+
+alter table `vehicle`.`ADVAIT_claim_statement` add
+constraint fk_cust_id6 foreign key (`cust_id`) references `vehicle`.`ADVAIT_customer`(`cust_id`);
+
+alter table `vehicle`.`ADVAIT_claim_statement` add
+constraint fk_claim_id foreign key (`claim_id`) references `vehicle`.`ADVAIT_claim`(`claim_id`);
+
+
+CREATE TABLE `vehicle`.`ADVAIT_staff` (
+  `staff_id` VARCHAR(20),
+  `company_name` VARCHAR(20) NOT NULL,
+  `staff_fname` VARCHAR(10) NOT NULL,
+  `staff_lname` VARCHAR(10) NOT NULL,
+  `staff_address` VARCHAR(20) NOT NULL,
+  `staff_contact` INT NOT NULL UNIQUE,
+  `staff_gender` CHAR(2) NOT NULL,
+  `staff_maritial_status` CHAR(8) NOT NULL,
+  `staff_nationality` CHAR(15) NOT NULL,
+  `staff_qualification` VARCHAR(20) NOT NULL,
+  `staff_allowance` INT NOT NULL,
+  `staff_pps_number` INT NOT NULL UNIQUE,
+  PRIMARY KEY (`staff_id`),
+  UNIQUE INDEX `staff_id_UNIQUE` (`staff_id` ASC) VISIBLE,
+  UNIQUE INDEX `company_name_UNIQUE` (`company_name` ASC) VISIBLE);
+  
+
+alter table `vehicle`.`ADVAIT_staff` add
+constraint fk_company_name foreign key (`company_name`) references `vehicle`.`ADVAIT_insurance_company`(`company_name`);
+
+
+
+CREATE TABLE `vehicle`.`ADVAIT_department`(
+    `department_name` VARCHAR(10),
+    `company_name` VARCHAR(20) NOT NULL ,
+    `office` VARCHAR(10) NOT NULL,
+    `contact_information` VARCHAR(20) NOT NULL,
+    `department_staff` VARCHAR(50) NOT NULL,
+    `department_leader` VARCHAR(20) NOT NULL,
+    PRIMARY KEY (`department_name`),
+	UNIQUE INDEX `department_name_UNIQUE` (`department_name` ASC) VISIBLE,
+    UNIQUE INDEX `company_name_UNIQUE` (`company_name` ASC) VISIBLE);
+    
+alter table `vehicle`.`ADVAIT_department` add
+constraint fk_company_name2 foreign key (`company_name`) references `vehicle`.`ADVAIT_insurance_company`(`company_name`);
+
+
+CREATE TABLE `vehicle`.`ADVAIT_office`(
+    `office_name` VARCHAR(20),
+    `department_name` VARCHAR(10) NOT NULL ,
+    `company_name` VARCHAR(20) NOT NULL,
+    `office_leader` VARCHAR(10) NOT NULL,
+    `contact_information` VARCHAR(20) NOT NULL,
+    `adderss` VARCHAR(20) NOT NULL,
+    `admin_cost` INT NOT NULL,
+    `staff` VARCHAR(50) NOT NULL,
+    PRIMARY KEY (office_name),
+    UNIQUE INDEX `department_name_UNIQUE` (`department_name` ASC) VISIBLE,
+    UNIQUE INDEX `company_name_UNIQUE` (`company_name` ASC) VISIBLE
+);
+
+alter table `vehicle`.`ADVAIT_office` add
+constraint fk_company_name3 foreign key (`company_name`) references `vehicle`.`ADVAIT_insurance_company`(`company_name`);
+
+alter table `vehicle`.`ADVAIT_office` add
+constraint fk_department_name foreign key (`department_name`) references `vehicle`.`ADVAIT_department`(`department_name`);
+
+
+
+CREATE TABLE `vehicle`.`ADVAIT_membership`(
+    `membership_id` VARCHAR(20),
+    `cust_id` VARCHAR(20)NOT NULL ,
+    `membership_type` VARCHAR(20) NOT NULL,
+    `organisation_contact` CHAR(15) NOT NULL,
+    PRIMARY KEY (`membership_id`),
+	UNIQUE INDEX `membership_id_UNIQUE` (`membership_id` ASC) VISIBLE,
+	UNIQUE INDEX `cust_id_UNIQUE` (`cust_id` ASC) VISIBLE
+);
+
+alter table `vehicle`.`ADVAIT_membership` add
+constraint fk_cust_id7 foreign key (`cust_id`) references `vehicle`.`ADVAIT_customer`(`cust_id`) ;
+
+
+CREATE TABLE `vehicle`.`ADVAIT_vehicle_service` (
+  `vehicle_service` VARCHAR(20) NOT NULL,
+  `vehicle_id` VARCHAR(20) NOT NULL,
+  `cust_id` VARCHAR(20) NOT NULL,
+  `department_name` CHAR(20) NOT NULL,
+  `vehicle_service_address` VARCHAR(20) NOT NULL,
+  `vehicle_sevice_contact` VARCHAR(20) NOT NULL,
+  `vehicle_service_incharge` CHAR(20) NOT NULL,
+  `vehicle_service_type` VARCHAR(20) NOT NULL,
+  PRIMARY KEY (`vehicle_service`),
+  UNIQUE INDEX `vehicle_service_UNIQUE` (`vehicle_service` ASC) VISIBLE,
+  UNIQUE INDEX `vehicle_id_UNIQUE` (`vehicle_id` ASC) VISIBLE);
+    
+    
+alter table `vehicle`.`ADVAIT_vehicle_service` add
+constraint fk_cust_id8 foreign key (`cust_id`) references `vehicle`.`ADVAIT_customer`(`cust_id`);
+
+alter table `vehicle`.`ADVAIT_vehicle_service` add
+constraint fk_vehicle_id foreign key (`vehicle_id`) references `vehicle`.`ADVAIT_vehicle`(`vehicle_id`);
+    
+
+CREATE TABLE `vehicle`.`ADVAIT_NOK` (
+  `NOK_id` VARCHAR(20) NOT NULL ,
+  `agreement_id` VARCHAR(20) NOT NULL ,
+  `application_id` VARCHAR(20) NOT NULL ,
+  `cust_id` VARCHAR(20) NOT NULL ,
+  `NOK_name` VARCHAR(20) NOT NULL,
+  `NOK_address` VARCHAR(20) NOT NULL,
+  `NOK_phone_number` INT NOT NULL UNIQUE,
+  `NOK_martial_status` CHAR(8) NOT NULL,
+  `NOK_gender` CHAR(2) NOT NULL,
+  PRIMARY KEY (`NOK_id`),
+  UNIQUE INDEX `NOK_id_UNIQUE` (`NOK_id` ASC) VISIBLE,
+  UNIQUE INDEX `agreement_id_UNIQUE` (`agreement_id` ASC) VISIBLE,
+  UNIQUE INDEX `application_id_UNIQUE` (`application_id` ASC) VISIBLE,
+  UNIQUE INDEX `cust_id_UNIQUE` (`cust_id` ASC) VISIBLE);
+  
+  
+alter table `vehicle`.`ADVAIT_NOK` add
+constraint fk_cust_id9 foreign key (`cust_id`) references `vehicle`.`ADVAIT_customer`(`cust_id`);
+
+alter table `vehicle`.`ADVAIT_NOK` add
+constraint fk_application_id3 foreign key (`application_id`) references `vehicle`.`ADVAIT_application`(`application_id`); 
+
+alter table `vehicle`.`ADVAIT_NOK` add
+constraint fk_agreement_id foreign key (`agreement_id`) references `vehicle`.`ADVAIT_insurance_policy_coverage`(`agreement_id`); 
+
+
+
+CREATE TABLE `vehicle`.`ADVAIT_insurance_company` (
+  `company_name` VARCHAR(20) NOT NULL,
+  `company_address` VARCHAR(20) NOT NULL,
+  `company_contact_number` INT NOT NULL,
+  `company_fax` INT NOT NULL UNIQUE UNIQUE,
+  `company_email` VARCHAR(20) NOT NULL UNIQUE,
+  `company_website` VARCHAR(20) NOT NULL UNIQUE,
+  `company_location` VARCHAR(20) NOT NULL,
+  `company_departmant_name` VARCHAR(20) NOT NULL,
+  `company_office_name` VARCHAR(20) NOT NULL,
+  PRIMARY KEY (`company_name`),
+  UNIQUE INDEX `company_name_UNIQUE` (`company_name` ASC) VISIBLE);
+    
+
+CREATE TABLE `vehicle`.`ADVAIT_policy_renewable` (
+  `policy_renewable_id` VARCHAR(20) NOT NULL,
+  `agreement_id` VARCHAR(20) NOT NULL,
+  `application_id` VARCHAR(20) NOT NULL,
+  `cust_id` VARCHAR(20) NOT NULL,
+  `date_of_renewal` DATE NOT NULL,
+  `type_of_renewal` CHAR(15) NOT NULL,
+  PRIMARY KEY (`policy_renewable_id`),
+  UNIQUE INDEX `policy_renewable_id_UNIQUE` (`policy_renewable_id` ASC) VISIBLE,
+  UNIQUE INDEX `agreement_id_UNIQUE` (`agreement_id` ASC) VISIBLE,
+  UNIQUE INDEX `application_id_UNIQUE` (`application_id` ASC) VISIBLE,
+  UNIQUE INDEX `cust_id_UNIQUE` (`cust_id` ASC) VISIBLE);
+  
+
+alter table `vehicle`.`ADVAIT_policy_renewable` add
+constraint fk_cust_id10 foreign key (`cust_id`) references `vehicle`.`ADVAIT_customer`(`cust_id`);
+
+alter table `vehicle`.`ADVAIT_policy_renewable` add
+constraint fk_application_id4 foreign key (`application_id`) references `vehicle`.`ADVAIT_application`(`application_id`); 
+
+alter table `vehicle`.`ADVAIT_policy_renewable` add
+constraint fk_agreement_id2 foreign key (`agreement_id`) references `vehicle`.`ADVAIT_insurance_policy_coverage`(`agreement_id`); 
+    
+
+CREATE TABLE `vehicle`.`ADVAIT_incident` (
+  `incident_id` VARCHAR(20) NOT NULL,
+  `incident_type` VARCHAR(30) NOT NULL,
+  `incident_date` DATE NOT NULL,
+  `description` VARCHAR(100) NOT NULL,
+  PRIMARY KEY (`incident_id`),
+  UNIQUE INDEX `incident_id_UNIQUE` (`incident_id` ASC) VISIBLE);
+
+
+  CREATE TABLE `vehicle`.`ADVAIT_incident_report` (
+  `incident_report_id` VARCHAR(20) NOT NULL,
+  `incident_id` VARCHAR(20) NOT NULL ,
+  `cust_id` VARCHAR(20) NOT NULL,
+  `incident_inspector` VARCHAR(20) NOT NULL,
+  `incident_cost` INT NOT NULL,
+  `incident_type` CHAR(10) NOT NULL,
+  `incident_report_description` VARCHAR(100) NOT NULL,
+  PRIMARY KEY (`incident_report_id`),
+  UNIQUE INDEX `incident_report_id_UNIQUE` (`incident_report_id` ASC) VISIBLE,
+  UNIQUE INDEX `incident_id_UNIQUE` (`incident_id` ASC) VISIBLE,
+  UNIQUE INDEX `cust_id_UNIQUE` (`cust_id` ASC) VISIBLE);
+  
+
+alter table `vehicle`.`ADVAIT_incident_report` add
+constraint fk_cust_id11 foreign key (`cust_id`) references `vehicle`.`ADVAIT_customer`(`cust_id`);
+
+alter table `vehicle`.
+`ADVAIT_incident_report` add
+constraint fk_incident_id foreign key (`incident_id`) references `vehicle`.`ADVAIT_incident`(`incident_id`);
+
+
+
+
+  CREATE TABLE `vehicle`.`ADVAIT_coverage` (
+  `coverage_id` VARCHAR(20) NOT NULL,
+  `company_name` VARCHAR(20) NOT NULL,
+  `coverage_amount` INT NOT NULL,
+  `coverage_type` CHAR(10) NOT NULL,
+  `coverage_level` CHAR(15) NOT NULL,
+  `product_id` VARCHAR(20) NOT NULL,
+  `coverage_description` VARCHAR(100) NOT NULL,
+  `coverage_terms` VARCHAR(50) NOT NULL,
+  PRIMARY KEY (`coverage_id`),
+  UNIQUE INDEX `coverage_id_UNIQUE` (`coverage_id` ASC) VISIBLE,
+  UNIQUE INDEX `company_name_UNIQUE` (`company_name` ASC) VISIBLE);
+
+
+alter table `vehicle`.`ADVAIT_coverage` add
+constraint fk_company_name4 foreign key (`company_name`) references `vehicle`.`ADVAIT_insurance_company`(`company_name`);
+
+
+  CREATE TABLE `vehicle`.`ADVAIT_product` (
+  `product_number` VARCHAR(20) NOT NULL,
+  `company_name` VARCHAR(20) NOT NULL,
+  `product_price` INT NOT NULL,
+  `product_type` CHAR(15) NOT NULL,
+  PRIMARY KEY (`product_number`),
+  UNIQUE INDEX `product_number_UNIQUE` (`product_number` ASC) VISIBLE,
+  UNIQUE INDEX `company_name_UNIQUE` (`company_name` ASC) VISIBLE);
+  
+  
+alter table `vehicle`.`ADVAIT_product` add
+constraint fk_company_name5 foreign key (`company_name`) references `vehicle`.`ADVAIT_insurance_company`(`company_name`);
+
+
+  
+  CREATE TABLE `vehicle`.`ADVAIT_receipt` (
+  `receipt_id` VARCHAR(20) NOT NULL,
+  `premium_payment_id` VARCHAR(20) NOT NULL,
+  `cust_id` VARCHAR(20) NOT NULL,
+  `cost` INT NOT NULL,
+  `time` DATE NOT NULL,
+  PRIMARY KEY (`receipt_id`),
+  UNIQUE INDEX `receipt_id_UNIQUE` (`receipt_id` ASC) VISIBLE,
+  UNIQUE INDEX `premium_payment_id_UNIQUE` (`premium_payment_id` ASC) VISIBLE,
+  UNIQUE INDEX `cust_id_UNIQUE` (`cust_id` ASC) VISIBLE);
+  
+alter table `vehicle`.`ADVAIT_receipt` add
+constraint fk_cust_id12 foreign key (`cust_id`) references `vehicle`.`ADVAIT_customer`(`cust_id`);
+
+alter table `vehicle`.`ADVAIT_receipt` add
+constraint fk_premium_payment_id foreign key (`premium_payment_id`) references `vehicle`.`ADVAIT_premium_payment`(`premium_payment_id`);
+
+
+  CREATE TABLE `vehicle`.`ADVAIT_insurance_policy_coverage` (
+  `agreement_id` VARCHAR(20) NOT NULL,
+  `coverage_id` VARCHAR(20) NOT NULL,
+  PRIMARY KEY (`agreement_id`),
+  UNIQUE INDEX `agreement_id_UNIQUE` (`agreement_id` ASC) VISIBLE,
+  UNIQUE INDEX `coverage_id_UNIQUE` (`coverage_id` ASC) VISIBLE);
+  
+
+
+alter table `vehicle`.`ADVAIT_insurance_policy_coverage` add
+constraint fk_coverage_id foreign key (`coverage_id`) references `vehicle`.`ADVAIT_coverage`(`coverage_id`);
+  
+
+show tables;
+
+
+/* INSERT DATA */
+
+-- Data entry
+
+
+-- Customer
+
+INSERT INTO ADVAIT_customer VALUES("CUST001","Hemant","Dhawale","1992-08-21","M","2/129,3RD_PHASE,GOA","9876543981","hemant@GMAIL.COM","9876-1234-4567","UNMARRIED",45321867);
+INSERT INTO ADVAIT_customer VALUES("CUST002","Keshav","Kumar","1995-10-11","M","12/90,4TH_PHASE,PUNE","9876541234","Keshav@GMAIL.COM","6789-1234-4567","UNMARRIED",45321678);
+INSERT INTO ADVAIT_customer VALUES("CUST003","Brij","Vaghani","1993-12-07","M","AKSHAYA_COLONY,HUBLI","9876543232","Brij@GMAIL.COM","9876-4444-4567","MARRIED",34221867);
+INSERT INTO ADVAIT_customer VALUES("CUST004","Daulat","Jha","1997-06-15","M","ANNA_COLONY,CHENNAI","9876542332","Daulat@GMAIL.COM","3496-4444-4567","MARRIED",58221867);
+INSERT INTO ADVAIT_customer VALUES("CUST005","Rohan","Singh","1979-01-18","M","BECENT_ROAD,VIJAYWAD","9381542332","Rohan@GMAIL.COM","9124-4444-4567","MARRIED",58221781);
+INSERT INTO ADVAIT_customer VALUES("CUST006","Lucky","Yadav","1985-05-24","M","BANJARA_HILLS,HYD","9381549898","Lucky@GMAIL.COM","9124-7342-4567","MARRIED",56431781);
+INSERT INTO ADVAIT_customer VALUES("CUST007","Vinayak","Upaday","1964-02-28","M","ADYAR,CHENNAI","9381543625","Vinayak@GMAIL.COM","4562-7342-4567","UNMARRIED",65931781);
+INSERT INTO ADVAIT_customer VALUES("CUST008","Tarun","Sharma","1944-11-07","M","WHITE_HOUSE,USA","9991543999","Tarun@GMAIL.COM","4562-7342-8971","MARRIED",90359433);
+INSERT INTO ADVAIT_customer VALUES("CUST009","Hitarth","Vyas","1976-03-14","M","SEA_ATTLE,CALIFORNIA","9991543789","Hitarth@GMAIL.COM","1594-7342-8971","MARRIED",90356322);
+INSERT INTO ADVAIT_customer VALUES("CUST010","Tanzeem","Khan","1971-07-19","M","ALI_BABA,TAIWAN","8011543789","Tanzeem@GMAIL.COM","4951-7342-8971","MARRIED",45546322);
+INSERT INTO ADVAIT_customer VALUES("CUST011","Ashley","Vance","1985-06-24","M","KULURU,KURNOOL","7689543789","VANCE@GMAIL.COM","9148-9833-8971","UNMARRIED",74348765);
+INSERT INTO ADVAIT_customer VALUES("CUST012","Ayn","Rand","1956-09-11","F","AMSTER,NETHERLANDS","6362297167","RAND@GMAIL.COM","7167-2363-8971","UNMARRIED",54679723);
+INSERT INTO ADVAIT_customer VALUES("CUST013","Warren","Buffet","1953-05-17","M","MOUNT_VIEW,COLORADO","7854997167","BUFFET@GMAIL.COM","1689-3254-2546","MARRIED",46579723);
+INSERT INTO ADVAIT_customer VALUES("CUST014","Priya","Singh","1978-09-25","F","KUKATPALLI,GUNTURU","9148934896","priya@GMAIL.COM","8619-5234-4256","MARRIED",46579765);
+INSERT INTO ADVAIT_customer VALUES("CUST015","John","Wick","2000-09-12","M","SUWAI,THAIPUR","9845671230","WICK@GMAIL.COM","8921-2564-3567","UNMARRIED",70079007);
+INSERT INTO ADVAIT_customer VALUES("CUST016","Rayan","Lakshmi","2004-04-03","F","KRISHNA_COLONY,SGP","4587912365","LAKSHMI@GMAIL.COM","1275-2564-3883","UNMARRIED",69879007); 
+
+
+-- APPLICATION
+
+INSERT INTO ADVAIT_application VALUES("APP001","CUST001","40","ACCEPTED","2 SHEETS ATTACHED");
+INSERT INTO ADVAIT_application VALUES("APP002","CUST002","41","PENDING","4 SHEETS ATTACHED");
+INSERT INTO ADVAIT_application VALUES("APP003","CUST003","42","REJECTED","5 SHEETS ATTACHED");
+INSERT INTO ADVAIT_application VALUES("APP004","CUST004","43","ACCEPTED","6 SHEETS ATTACHED");
+INSERT INTO ADVAIT_application VALUES("APP005","CUST005","44","REJECTED","3 SHEETS ATTACHED");
+INSERT INTO ADVAIT_application VALUES("APP006","CUST006","45","ACCEPTED","4 SHEETS ATTACHED");
+INSERT INTO ADVAIT_application VALUES("APP007","CUST007","46","ACCEPTED","6 SHEETS ATTACHED");
+INSERT INTO ADVAIT_application VALUES("APP008","CUST008","47","PENDING","10 SHEETS ATTACHED");
+INSERT INTO ADVAIT_application VALUES("APP009","CUST009","48","ACCEPTED","7 SHEETS ATTACHED");
+INSERT INTO ADVAIT_application VALUES("APP010","CUST010","49","PENDING","5 SHEETS ATTACHED");
+INSERT INTO ADVAIT_application VALUES("APP011","CUST011","50","ACCEPTED","6 SHEETS ATTACHED");
+INSERT INTO ADVAIT_application VALUES("APP012","CUST012","51","REJECTED","3 SHEETS ATTACHED");
+INSERT INTO ADVAIT_application VALUES("APP013","CUST013","52","REJECTED","2 SHEETS ATTACHED");
+INSERT INTO ADVAIT_application VALUES("APP014","CUST014","53","ACCEPTED","8 SHEETS ATTACHED");
+INSERT INTO ADVAIT_application VALUES("APP015","CUST015","54","PENDING","4 SHEETS ATTACHED");
+INSERT INTO ADVAIT_application VALUES("APP016","CUST016","55","REJECTED","2 SHEETS ATTACHED");
+
+
+-- QUOTE
+
+INSERT INTO ADVAIT_quote VALUES("QOT001","APP001","CUST001","2017-06-21","2017-06-21","2017-06-30","WE WILL COVER UP TO 300000","PDT0","BASIC COVERAGE");
+INSERT INTO ADVAIT_quote VALUES("QOT002","APP002","CUST002","2015-06-21","2015-06-21","2015-06-30","WE WILL COVER UP BETWEEN 200000-800000","PDT1","BASIC COVERAGE");
+INSERT INTO ADVAIT_quote VALUES("QOT003","APP003","CUST003","2017-05-01","2017-05-01","2017-05-10","WE WILL COVER UP TO 500000","PDT2","COMPLETE COVERSGE");
+INSERT INTO ADVAIT_quote VALUES("QOT004","APP004","CUST004","2011-06-21","2011-06-21","2011-06-30","WE WILL COVER UP BETWEEN 100000-900000","PDT3","SPECIFIC COVERAGE");
+INSERT INTO ADVAIT_quote VALUES("QOT005","APP005","CUST005","2010-08-15","2010-08-15","2010-08-25","WE WILL COVER UP TO 500000","PDT4","COMPLETE COVERAGE");
+INSERT INTO ADVAIT_quote VALUES("QOT006","APP006","CUST006","2009-06-21","2009-06-21","2009-06-30","WE WILL COVER UP TO 600000","PDT5","SPECIFIC COVERAGE");
+INSERT INTO ADVAIT_quote VALUES("QOT007","APP007","CUST007","2005-06-03","2005-06-03","2005-06-13","WE WILL COVER UP BETWEEN 200000-500000","PDT6","BASIC COVERAGE");
+INSERT INTO ADVAIT_quote VALUES("QOT008","APP008","CUST008","2014-01-21","2014-01-21","2014-01-30","WE WILL COVER UP TO 400000","PDT7","COMPLETE COVERAGE");
+INSERT INTO ADVAIT_quote VALUES("QOT009","APP009","CUST009","2004-06-18","2004-06-18","2004-06-28","WE WILL COVER UP BETWEEN 400000-600000","PDT8","COMPLETE COVERAGE");
+INSERT INTO ADVAIT_quote VALUES("QOT010","APP010","CUST010","2001-03-04","2001-06-03","2001-03-14","WE WILL COVER UP TO 1000000","PDT9","SPECIFIC COVERAGE");
+INSERT INTO ADVAIT_quote VALUES("QOT011","APP011","CUST011","2008-06-11","2008-06-11","2008-06-21","WE WILL COVER UP TO 600000","PDT10","BASIC COVERAGE");
+INSERT INTO ADVAIT_quote VALUES("QOT012","APP012","CUST012","2020-06-21","2020-06-21","2020-06-30","WE WILL COVER UP BETWEEN 90000-200000","PDT11","BASIC COVERAGE");
+INSERT INTO ADVAIT_quote VALUES("QOT013","APP013","CUST013","2019-04-21","2019-04-21","2019-04-30","WE WILL COVER UP TO 900000","PDT12","COMPLETE COVERAGE");
+INSERT INTO ADVAIT_quote VALUES("QOT014","APP014","CUST014","2017-12-21","2017-12-21","2017-12-30","WE WILL COVER UP BETWEEN 100000-120000","PDT13","SPECIFIC COVERAGE");
+INSERT INTO ADVAIT_quote VALUES("QOT015","APP015","CUST015","2000-06-10","2000-06-10","2000-06-20","WE WILL COVER UP TO 800000","PDT14","SPECIFIC COVERAGE");
+INSERT INTO ADVAIT_quote VALUES("QOT016","APP016","CUST016","2002-10-21","2002-10-21","2002-10-30","WE WILL COVER UP BETWEEN 100000-900000","PDT15","BASIC COVERAGE");
+
+
+-- INSURANCE_POLICY
+
+INSERT INTO ADVAIT_insurance_policy VALUES('AGR001',"APP001","CUST001",'PAYMENTS_COMMISN',"108010109624",'2002-01-05','2004-01-06','ANY ACCIDENTAL LOSS,DAMAGE OR LIABILITY CAUSED SUSTAINED OR INCURRED OUTSIDE THE GEOGRAPHICALAREA');
+INSERT INTO ADVAIT_insurance_policy VALUES('AGR002',"APP002","CUST002",'PRODUCTION_AND_SALES',"108010201475",'2004-02-15','2006-04-06','ANY CLAIM ARISING OUT OF ANY CONTRACTUAL LIABILITY');
+INSERT INTO ADVAIT_insurance_policy VALUES('AGR003',"APP003","CUST003",'REINSURANCE_DEPT',"108010856974",'2000-03-25','2003-01-26','THE ESTIMATED COST OF SUCH REPAIR INCLUDING REPLACEMENTS, IF ANY, DOES NOT EXCEED RS. 500/-');
+INSERT INTO ADVAIT_insurance_policy VALUES('AGR004',"APP004","CUST004",'AGENT_RECRUITMENT',"108010489576",'2012-11-05','2013-12-06','THE COMPANY MUST BE FURNISHED FORTHWITH WITH A DETAILED ESTIMATE OF THE COST OF REPAIRS');
+INSERT INTO ADVAIT_insurance_policy VALUES('AGR005',"APP005","CUST005",'OFFICE_ADMIN_DEPT',"108010258973",'2014-06-11','2017-05-10','THE INSURED SHALL GIVE THE COMPANY EVERY ASSISTANCE TO SEE THAT THECHARGES ARE REASONABLE');
+INSERT INTO ADVAIT_insurance_policy VALUES('AGR006',"APP006","CUST006",'RECRUITMENT_DEPT',"108010028790",'2004-03-14','2007-12-12','NO COMPENSATION SHALL BE PAYABLE IN RESPECT OF DEATH OR BODILY INJURY DIRECTLY OR INDIRECTLY');
+INSERT INTO ADVAIT_insurance_policy VALUES('AGR007',"APP007","CUST007",'PRODUCTION_AND_SALES',"108010350220",'2013-11-15','2017-03-23','THE OWNER-DRIVER IS THE ONLY INSURED NAMED IN THIS POLICY');
+INSERT INTO ADVAIT_insurance_policy VALUES('AGR008',"APP008","CUST008",'AGENT_RECRUITMENT',"108010020100",'2002-01-05','2004-01-06','ANY ACCIDENTAL LOSS,DAMAGE OR LIABILITY DIRECTLY/INDIRECTLY CAUSED FROM NUCLEAR WEAPONS MATERIAL');
+INSERT INTO ADVAIT_insurance_policy VALUES('AGR009',"APP009","CUST009",'RECRUITMENT_DEPT',"108010789456",'2006-05-14','2007-06-27','ANY ACCIDENTAL LOSS,DAMAGE OR LIABILITY DIRECTLY/INDIRECTLY INVOLVED IN CONNECTION WITH WAR');
+INSERT INTO ADVAIT_insurance_policy VALUES('AGR010',"APP010","CUST010",'PAYMENTS_COMMISN',"108010654987",'2010-03-17','2013-02-18','DAMAGE TO TYRES,TUBES LIABILITY OF THE COMPANY SHALL BE LIMITED TO 50% OF THE COST OF REPLACEMENT');
+INSERT INTO ADVAIT_insurance_policy VALUES('AGR011',"APP011","CUST011",'REINSURANCE_DEPT',"108010369852",'2012-09-01','2014-09-03','ANY ACCIDENTAL LOSS/DAMAGE UNDER THE INFLUENCE OF INTOXICATING LIQUOR OR DRUGS IS NOT LIABLE');
+INSERT INTO ADVAIT_insurance_policy VALUES('AGR012',"APP012","CUST012",'OFFICE_ADMIN_DEPT',"108010147258",'2016-10-15','2019-03-11','CONSEQUENTIAL LOSS,DEPRECIATION,WEAR/TEAR,MECH/ELECTRIC BREAKDOWN, FAILURES ORBREAKAGES ARE LIABLE');
+INSERT INTO ADVAIT_insurance_policy VALUES('AGR013',"APP013","CUST013",'PRODUCTION_AND_SALES',"108010021654",'2009-04-19','2012-06-06','BY FIRE EXPLOSION SELF IGNITION OR LIGHTNING ARE NOT LAIBLE');
+INSERT INTO ADVAIT_insurance_policy VALUES('AGR014',"APP014","CUST014",'RECRUITMENT_DEPT',"108010874963",'2018-10-07','2020-03-16','BY BURGLARY HOUSEBREAKING OR THEFT ARE NOT LAIBLE');
+INSERT INTO ADVAIT_insurance_policy VALUES('AGR015',"APP015","CUST015",'AGENT_RECRUITMENT',"108010189357",'2020-01-13','2022-02-14','BY FLOOD TYPHOON HURRICANE STORM TEMPEST INUNDATION CYCLONE HAILSTORM FROST ARE NOT LAIBLE');
+INSERT INTO ADVAIT_insurance_policy VALUES('AGR016',"APP016","CUST016",'OFFICE_ADMIN_DEPT',"108010489657",'2020-04-09','2024-05-10','BY EARTHQUAKE (FIRE AND SHOCK DAMAGE) ARE NOT LAIBLE');
+
+
+
+-- PREMIUM_PAYMENT
+
+INSERT INTO ADVAIT_premium_payment VALUES("PRP001","CUST001",108010109624,"2020-04-14",6000,"4RID_1");
+INSERT INTO ADVAIT_premium_payment VALUES("PRP002","CUST002",108010201475,"2019-11-12",0,"4RID_2");
+INSERT INTO ADVAIT_premium_payment VALUES("PRP003","CUST003",108010856974,"2018-09-01",0,"4RID_1");
+INSERT INTO ADVAIT_premium_payment VALUES("PRP004","CUST005",108010489576,"2018-01-19",0,"4RID_3");
+INSERT INTO ADVAIT_premium_payment VALUES("PRP005","CUST008",108010258973,"2016-02-15",0,"4RID_2");
+INSERT INTO ADVAIT_premium_payment VALUES("PRP006","CUST010",108010028790,"2017-12-21",48000,"4RID_4");
+INSERT INTO ADVAIT_premium_payment VALUES("PRP007","CUST011",108010350220,"2017-11-26",32000,"4RID_3");
+INSERT INTO ADVAIT_premium_payment VALUES("PRP008","CUST012",108010020100,"2018-05-07",0,"4RID_5");
+INSERT INTO ADVAIT_premium_payment VALUES("PRP009","CUST013",108010789456,"2015-07-05",86000,"4RID_4");
+INSERT INTO ADVAIT_premium_payment VALUES("PRP010","CUST014",108010654987,"2004-08-18",25000,"4RID_6");
+INSERT INTO ADVAIT_premium_payment VALUES("PRP011","CUST002",108010369852,"2005-06-29",28000,"4RID_4");
+INSERT INTO ADVAIT_premium_payment VALUES("PRP012","CUST015",108010147258,"2008-03-31",0,"4RID_7");
+INSERT INTO ADVAIT_premium_payment VALUES("PRP013","CUST004",108010021654,"2007-12-06",45800,"4RID_6");
+INSERT INTO ADVAIT_premium_payment VALUES("PRP014","CUST005",108010874963,"2013-11-01",0,"4RID_8");
+INSERT INTO ADVAIT_premium_payment VALUES("PRP015","CUST006",108010189357,"2015-09-14",89000,"4RID_6");
+INSERT INTO ADVAIT_premium_payment VALUES("PRP016","CUST012",108010489657,"2020-07-11",99000,"4RID_0");
+INSERT INTO ADVAIT_premium_payment VALUES("PRP017","CUST016",108010481256,"2019-07-11",78000,"4RID_0");
+INSERT INTO ADVAIT_premium_payment VALUES("PRP018","CUST014",108010481257,"2018-07-11",66000,"4RID_0");
+INSERT INTO ADVAIT_premium_payment VALUES("PRP019","CUST013",108010481258,"2017-07-11",89000,"4RID_0");
+INSERT INTO ADVAIT_premium_payment VALUES("PRP020","CUST001",108010481259,"2016-07-11",0,"4RID_0");
+
+
+-- VEHICLE
+
+INSERT INTO ADVAIT_vehicle VALUES("VEH001","CUST001","4_PI_1","4_DI_1","AP21X5654",600000,"CAR",6,5,"HONDA",765,090,"125","MOD34");
+INSERT INTO ADVAIT_vehicle VALUES("VEH002","CUST002","4_PI_2","4_DI_2","AP35Z7869",6000000,"MINI-CAR",5,4,"TATA",765,091,"127","MOD12");
+INSERT INTO ADVAIT_vehicle VALUES("VEH003","CUST003","4_PI_3","4_DI_3","AP46Y4325",700000,"JEEP",4,3,"MARUTI",568,092,"129","MOD56");
+INSERT INTO ADVAIT_vehicle VALUES("VEH004","CUST004","4_PI_4","4_DI_4","KA34AB3968",500000,"MACRO-CAR",7,6,"ERTIGA",458,093,"852","MOD78");
+INSERT INTO ADVAIT_vehicle VALUES("VEH005","CUST005","4_PI_5","4_DI_5","PJ12WX4128",1000000,"LARGE-CAR",5,4,"HERO",963,094,"457","MOD90");
+INSERT INTO ADVAIT_vehicle VALUES("VEH006","CUST006","4_PI_6","4_DI_6","MH35XK0368",800000,"JEEP",9,7,"XYLO",485,095,"631","MOD1");
+INSERT INTO ADVAIT_vehicle VALUES("VEH007","CUST007","4_PI_7","4_DI_7","UP45UB8376",1100000,"CAR",7,5,"HYUNDAI",021,096,"12","MOD2");
+INSERT INTO ADVAIT_vehicle VALUES("VEH008","CUST008","4_PI_8","4_DI_8","UP12MN8973",800000,"MINI",6,3,"BENZ",210,097,"023","MOD3");
+INSERT INTO ADVAIT_vehicle VALUES("VEH009","CUST009","4_PI_9","4_DI_9","AP51X4862",2500000,"VAN",4,2,"BMW",485,098,"103","MOD5");
+INSERT INTO ADVAIT_vehicle VALUES("VEH010","CUST010","4_PI_1","4_DI_10","KA51UR8903",3500000,"CAR",7,4,"AUDI",430,099,"754","MOD6");
+INSERT INTO ADVAIT_vehicle VALUES("VEH011","CUST011","4_PI_11","4_DI_11","MP89L0293",8000000,"MACRO-CAR",9,5,"JAGUAR",789,100,"55","MOD7",410);
+INSERT INTO ADVAIT_vehicle VALUES("VEH012","CUST012","4_PI_7","4_DI_12","UK56XP8342",1500000,"TEMPO",8,6,"TOYOTA",985,101,"632","MOD8",411);
+INSERT INTO ADVAIT_vehicle VALUES("VEH013","CUST013","4_PI_5","4_DI_13","KL20IB7803",7500000,"CAR",7,7,"LAMBORGINI",347,102,"451","MOD9",412);
+INSERT INTO ADVAIT_vehicle VALUES("VEH014","CUST014","4_PI_3","4_DI_14","TN67ML8912",1400000,"JEEP",5,4,"KIA",888,103,"999","MOD10",413);
+INSERT INTO ADVAIT_vehicle VALUES("VEH015","CUST015","4_PI_0","4_DI_15","AP21XP4931",1200000,"MOTOR-CAR",8,6,"HONDA",021,104,"012","MOD89",414);
+INSERT INTO ADVAIT_vehicle VALUES("VEH016","CUST016","4_PI_1","4_DI_16","AP35RT8976",900000,"CAR",7,5,"HERO",111,105,"013","MOD55",415);
+INSERT INTO ADVAIT_vehicle VALUES("VEH017","CUST003","4_PI_2","4_DI_17","MP35KL5432",300000,"JEEP",7,5,"HONDA",112,106,"014","MOD46",402);
+INSERT INTO ADVAIT_vehicle VALUES("VEH018","CUST004","4_PI_4","4_DI_18","TN47YL7896",700000,"TEMPO",7,5,"TATA",113,107,"015","MOD45",403);
+INSERT INTO ADVAIT_vehicle VALUES("VEH019","CUST012","4_PI_3","4_DI_19","KL12AB9078",1200000,"CAR",7,5,"AUDI",114,108,"016","MOD57",411);
+INSERT INTO ADVAIT_vehicle VALUES("VEH020","CUST014","4_PI_4","4_DI_20","KA67PH6452",1100000,"MACRO-CAR",7,5,"HERO",119,105,"017","MOD33",413);
+INSERT INTO ADVAIT_vehicle VALUES("VEH021","CUST012","4_PI_5","4_DI_21","AP35RT8203",1000000,"CAR",7,5,"KIA",116,105,"013","MOD22",411);
+
+
+-- CLAIM
+
+INSERT INTO ADVAIT_claim VALUES('CLM80','CUST001','AGR01',8000,'INC40000','MAJOR','2012-02-07','PENDING');
+INSERT INTO ADVAIT_claim VALUES('CLM81','CUST002','AGR02',4300,'INC40001','TOLERABLE','2014-04-09','APPROVED');
+INSERT INTO ADVAIT_claim VALUES('CLM82','CUST003','AGR03',4400,'INC40002','MINOR','2016-10-25','PENDING');
+INSERT INTO ADVAIT_claim VALUES('CLM83','CUST004','AGR04',8800,'INC40003','MAJOR','2013-05-14','PENDING');
+INSERT INTO ADVAIT_claim VALUES('CLM84','CUST005','AGR05',5300,'INC40004','TOLERABLE','2014-06-23','PENDING');
+INSERT INTO ADVAIT_claim VALUES('CLM85','CUST006','AGR06',4800,'INC40005','MAJOR','2017-01-11','PENDING');
+INSERT INTO ADVAIT_claim VALUES('CLM86','CUST007','AGR07',5400,'INC40006','MINOR','2017-12-10','APPROVED');
+INSERT INTO ADVAIT_claim VALUES('CLM87','CUST008','AGR08',5550,'INC40007','MINOR','2019-09-21','PENDING');
+INSERT INTO ADVAIT_claim VALUES('CLM88','CUST009','AGR09',5400,'INC40008','TOLERABLE','2018-11-17','REJECTED');
+INSERT INTO ADVAIT_claim VALUES('CLM89','CUST010','AGR10',5600,'INC40009','MAJOR','2016-07-12','APPROVED');
+INSERT INTO ADVAIT_claim VALUES('CLM90','CUST011','AGR11',5700,'INC40010','MAJOR','2020-05-19','PENDING');
+INSERT INTO ADVAIT_claim VALUES('CLM91','CUST012','AGR12',9000,'INC40011','MINOR','2012-06-23','PENDING');
+INSERT INTO ADVAIT_claim VALUES('CLM92','CUST013','AGR13',5800,'INC40012','MINOR','2011-08-26','PENDING');
+INSERT INTO ADVAIT_claim VALUES('CLM93','CUST014','AGR14',12000,'INC40013','MAJOR','2018-05-07','PENDING');
+INSERT INTO ADVAIT_claim VALUES('CLM94','CUST015','AGR15',5900,'INC40014','TOLERABLE','2019-04-19','PENDING');
+INSERT INTO ADVAIT_claim VALUES('CLM95','CUST016','AGR16',6000,'INC40015','MINOR','2020-09-24','APPROVED');
+
+
+
+-- CLAIM_SETTLEMENT
+
+INSERT INTO ADVAIT_claim_statement VALUES('CLAT120','CLM80','CUST001',40,'2012-05-07',3820,'COV01');
+INSERT INTO ADVAIT_claim_statement VALUES('CLAT121','CLM81','CUST002',41,'2014-12-09',4000,'COV02');
+INSERT INTO ADVAIT_claim_statement VALUES('CLAT122','CLM82','CUST003',42,'2016-01-25',4020,'COV03');
+INSERT INTO ADVAIT_claim_statement VALUES('CLAT123','CLM83','CUST004',43,'2013-07-14',4245,'COV04');
+INSERT INTO ADVAIT_claim_statement VALUES('CLAT124','CLM84','CUST005',44,'2014-07-23',5213,'COV05');
+INSERT INTO ADVAIT_claim_statement VALUES('CLAT125','CLM85','CUST006',45,'2017-12-11',4750,'COV06');
+INSERT INTO ADVAIT_claim_statement VALUES('CLAT126','CLM86','CUST007',46,'2018-01-10',5320,'COV07');
+INSERT INTO ADVAIT_claim_statement VALUES('CLAT127','CLM87','CUST008',47,'2010-10-21',5520,'COV08');
+INSERT INTO ADVAIT_claim_statement VALUES('CLAT128','CLM88','CUST009',48,'2020-12-17',5200,'COV09');
+INSERT INTO ADVAIT_claim_statement VALUES('CLAT129','CLM89','CUST010',49,'2022-08-12',5524,'COV10');
+INSERT INTO ADVAIT_claim_statement VALUES('CLAT130','CLM90','CUST011',50,'2021-06-19',2700,'COV11');
+INSERT INTO ADVAIT_claim_statement VALUES('CLAT131','CLM91','CUST012',51,'2019-07-23',5635,'COV12');
+INSERT INTO ADVAIT_claim_statement VALUES('CLAT132','CLM92','CUST013',52,'2011-09-26',5200,'COV13');
+INSERT INTO ADVAIT_claim_statement VALUES('CLAT133','CLM93','CUST014',53,'2018-06-07',5800,'COV14');
+INSERT INTO ADVAIT_claim_statement VALUES('CLAT134','CLM94','CUST015',54,'2019-05-19',5290,'COV15');
+INSERT INTO ADVAIT_claim_statement VALUES('CLAT135','CLM95','CUST016',55,'2021-10-24',5820,'COV16');
+
+
+-- STAFF
+
+INSERT INTO ADVAIT_staff VALUES("STFA23","AEGON INSURANCE","VIJAY","KRISHNA","MAMALLAB_RD,CHENNAI","9786543628","M","UNMARRIED","INDIA","QUALIFIED_DEGREE","5000","899896852");
+INSERT INTO ADVAIT_staff VALUES("STFB35","AVIVA INSURANCE","JAGADESH","REDDY","MANGAL_CROSS,DELHI","9872543624","M","MARRIED","INDIA","GRADUATED","4000","874561095");
+INSERT INTO ADVAIT_staff VALUES("STFC46","BAJAJ INSURANCE","ANIL","KUMAR","KALPASAKI_ST,HYD","9875671204","M","MARRIED","INDIA","PASSED_10TH","8000","542387921");
+INSERT INTO ADVAIT_staff VALUES("STFD17","BHARTI INSURANCE","KARTHIK","KUMAR","KAMAKSI_ST,VIZAG","9432167125","M","UNMARRIED","UNITED_KINDOM","QUALIFIED_DEGREE","5000","985236471");
+INSERT INTO ADVAIT_staff VALUES("STFE32","BIRLA SUN INSURANCE","LAXMI","PRASANNA","GOPAL_AREA,AP","9343543622","F","MARRIED","AUSTRALIA","GRADUATED","4000","583127842");
+INSERT INTO ADVAIT_staff VALUES("STFF87","CANARA HSBC","BHARATH","KUMAR","PURIAPARK,MAHARASTRA","8789543627","M","UNMARRIED","INDIAN","GRADUATED","5000","962483175");
+INSERT INTO ADVAIT_staff VALUES("STFG89","CANARA HSBC","SPANDANA","YADAV","MAMALLABURAM,AP","8989761211","F","MARRIED","USA","GRADUATED","6000","984302178");
+INSERT INTO ADVAIT_staff VALUES("STFH53","DHFL PRAMERICA","SAI","SAMPATH","GOPALAPATNAM,BHP","9001543644","M","MARRIED","INDIA","PASSED_10TH","3000","960348521");
+INSERT INTO ADVAIT_staff VALUES("STFI44","EDELWEISS TOKIO","SAI","KEERTHI","WALTAIR_RD,VIZAG","7895776564","F","UNMARRIED","INDIA","PASSED 10TH","2000","970562132");
+INSERT INTO ADVAIT_staff VALUES("STFJ31","EXIDE LIFE INSURANCE","DEEPIKA","REDDY","KULOOR_RD,MANGLOR","8321544687","F","UNMARRIED","INDIA","QUALIFIED_DEGREE","4000","938179521");
+INSERT INTO ADVAIT_staff VALUES("STFL50","EXIDE LIFE INSURANCE","MANEESH","KUMAR","JEEDIMETLA,HYD","9321743612","M","MARRIED","USA","GRADUATE","6000","879145222");
+INSERT INTO ADVAIT_staff VALUES("STFM44","HDFC STANDARD","JASWANTH","REDDY","TOKICHOKI_RD,HYD","8621540617","M","UNMARRIED","INDIA","QUALIFIED_DEGREE","5000","452186395");
+INSERT INTO ADVAIT_staff VALUES("STFN12","ICICI PRUDENTIAL","RAGU","PRASAD","BENCZ_RD,GUJARATH","8621543634","M","UNMARRIED","INDIA","PASSED_+2","1000","988823145");
+INSERT INTO ADVAIT_staff VALUES("STFO71","IDBI INSURANCE","VAMSI","KRISHNA","SHER_E_COLONY,PUNJAB","9786596823","M","MARRIED","INDIA","PASSED_+2","3000","899985617");
+INSERT INTO ADVAIT_staff VALUES("STFP33","IDBI INSURANCE","KALYANI","KUMAR","AKSHAY_RD,KARNATAKA","9241596899","F","UNMARRIED","INDIA","GRADUATE","4000","886014793");
+INSERT INTO ADVAIT_staff VALUES("STFQ98","IDBI INSURANCE","SAI","MOHAN","MGR_CENTER,TN","7887234171","M","MARRIED","AUSTRALIA","GRADUATE","5000","982347501");
+
+
+
+
+-- DEPARTMENT
+
+INSERT INTO ADVAIT_department VALUES("PRODUCTION_AND_SALES","EDELWEISS TOKIO","ELWEISS_VSKP",9908556864,"JOE,JACK,JOHN,JANU","JACK");
+INSERT INTO ADVAIT_department VALUES("PAYMENTS_AND_COMMISN","AVIVA INSURANCE","AVIVA_DEL",6362297167,"BEN,BOB,CAL,SMITH","SMITH");
+INSERT INTO ADVAIT_department VALUES("REINSURANCE_DEPT","AEGON INSURANCE","AEGON_CHENNAI",9108567821,"DEAN,DEV,VARUN,SAI","SAI");
+INSERT INTO ADVAIT_department VALUES("RECRUITMENT_DEPT","ICICI PRUDENTIAL","ICICI_HYD",9148934896,"SAM,ANU,RAM,SEENU","ANU");
+INSERT INTO ADVAIT_department VALUES("AGENT_RECRUITMENT","KOTAK INSURANCE","KARNATAKA",9148934756,"CHAY,CHI,SRI,LAX","CHAY");
+INSERT INTO ADVAIT_department VALUES("OFFICE_ADMIN_DEPT","HDFC STANDARD","HDFC_HYDERABAD",8660685654,"RANI,RAJA,SIMHA","RAJA");
+INSERT INTO ADVAIT_department VALUES("ADVT_DEPT","KOTAK INSURANCE","KARNATAKA",8660685654,"RANI,RAJA,SIMHA","RAJA");
+INSERT INTO ADVAIT_department VALUES("MARKETING_DEPT","HDFC STANDARD","HDFC_HYDERABAD",8660685654,"RANI,RAJA,SIMHA","RAJA");
+INSERT INTO ADVAIT_department VALUES("TECHNICAL_DEPT","ICICI PRUDENTIAL","ICICI_HYD",8660685654,"RANI,RAJA,SIMHA","RAJA");
+INSERT INTO ADVAIT_department VALUES("HR_DEPT","HDFC STANDARD","HDFC_HYDERABAD",8660685654,"RANI,RAJA,SIMHA","RAJA");
+
+
+-- OFFICE
+
+INSERT INTO ADVAIT_office VALUES ('AEGON_CHENNAI','REINSURANCE_DEPT','AEGON INSURANCE','KARTHICK','AEGON@GMAIL.COM','MAMALLAB_RD,CHENNAI','2000','VIJAY KRISHNA');
+INSERT INTO ADVAIT_office VALUES ('AVIVA_DEL','PAYMENTS_AND_COMMISN','AVIVA INSURANCE','VINEETH','AVIVA@GMAIL.COM','MANGAL_CROSS,DELHI','1900','JAGADESH REDDY');
+INSERT INTO ADVAIT_office VALUES ('BAJAJ_HYD','PRODUCTION_AND_SALES','BAJAJ INSURANCE','LAXMINARAYANA','BAJAJ@GMAIL.COM','KALPASAKI_ST,HYD','1600','ANIL KUMAR');
+INSERT INTO ADVAIT_office VALUES ('BHARTI_VIZAG','OFFICE_ADMIN_DEPT','BHARTI INSURANCE','BHARATH','BHARTI@GMAIL.COM','KAMAKSI_ST,VIZAG','1700','KARTHICK KUMAR ');
+INSERT INTO ADVAIT_office VALUES ('BIRLA_VSKP','REINSURANCE_DEPT','BIRLA SUN INSURANCE','KALYANBABU','BIRLA@GMAIL.COM','MARRIPALEM','2100','LAXMI PRASANNA');
+INSERT INTO ADVAIT_office VALUES ('CANARA_GUNTUR','PAYMENTS_AND_COMMISN','CANARA HSBC','JAGAN','CANARA@GMAIL.COM','104 AREA,NAD','1500','BHARATH KUMAR');
+INSERT INTO ADVAIT_office VALUES ('DHFL_ONGOLE','AGENT_RECRUITMENT','DHFL PRAMERICA','CHANDHAN','DHFL@GMAIL.COM','MAMALLABURAM,ITI','1700','SPANDANA YADAV');
+INSERT INTO ADVAIT_office VALUES ('ELWEISS_VSKP','PRODUCTION_AND_SALES','EDELWEISS TOKIO','TRINADH','EDELWEISS@GMAIL.COM','GOPALAPATNAM,BHPV','1900','SAI SAMPATH');
+INSERT INTO ADVAIT_office VALUES ('ICICI_HYD','RECRUITMENT_DEPT','ICICI PRUDENTIAL','RAGHAVAN','ICICI@GMAIL.COM','TOKICHOKI_RD,HYD','1800','SAI KEERTHI');
+INSERT INTO ADVAIT_office VALUES ('EXIDE_VIZAG','REINSURANCE_DEPT','EXIDE LIFE INSURANCE','ADITYA','EXIDE@GMAIL.COM','WALTAIR_RD,VIZAG','1400','DEEPIKA REDDY');
+INSERT INTO ADVAIT_office VALUES ('FUTURE_G_MANGLORE','PAYMENTS_AND_COMMISN','FUTURE GENERALI','LOKESH','FUTUREG@GMAIL.COM','KULOOR_RD,MANGLOR','1500','MANEESH KUMAR');
+INSERT INTO ADVAIT_office VALUES ('HDFC_HYDERABAD','OFFICE_ADMIN_DEPT','HDFC STANDARD','AVINASH','HDFC@GMAIL.COM','JEEDIMETLA,HYD','1900','JASWANTH REDDY');
+INSERT INTO ADVAIT_office VALUES ('IDBI_GUJARATH','OFFICE_ADMIN_DEPT','IDBI INSURANCE','GOUTHAM','IDBI@GMAIL.COM','BENCZ_RD,GUJARATH','2100','RAGU PRASAD');
+INSERT INTO ADVAIT_office VALUES ('INDIAFIRST_PUNJAB','PRODUCTION_AND_SALES','INDIAFIRST INSUR','DEEPAK','INDIA@GMAIL.COM','SHER_E_COLONY,PUNJAB','2000','VAMSI KRISHNA');
+INSERT INTO ADVAIT_office VALUES ('KOTAK_KARNATAKA','AGENT_RECRUITMENT','KOTAK INSURANCE','SAMPATH','KOTAK@GMAIL.COM','AKSHAY_RD,KARNATAKA','1700','KALYANI KUMAR');
+INSERT INTO ADVAIT_office VALUES ('DHFL_MAHARASTRA','PAYMENTS_AND_COMMISN','DHFL INSURANCE','PAVAN','DHFL@GMAIL.COM','PURIAPARK,MAHARASTRA','1500','SAI MOHAN');
+
+
+-- MEMBERSHIP
+
+INSERT INTO ADVAIT_membership VALUES('MEB00','CUST001','SHORT-TERM',7555429480);
+INSERT INTO ADVAIT_membership VALUES('MEB01','CUST002','SHORT-TERM',3856822468);
+INSERT INTO ADVAIT_membership VALUES('MEB02','CUST003','PREMIUM',9855519514);
+INSERT INTO ADVAIT_membership VALUES('MEB03','CUST004','LIFETIME',8555866463);
+INSERT INTO ADVAIT_membership VALUES('MEB04','CUST005','LIFETIME',9155587725);
+INSERT INTO ADVAIT_membership VALUES('MEB05','CUST006','SHORT-TERM',3851837986);
+INSERT INTO ADVAIT_membership VALUES('MEB06','CUST007','PREMIUM',9455532115);
+INSERT INTO ADVAIT_membership VALUES('MEB07','CUST008','SHORT-TERM',7555429480);
+INSERT INTO ADVAIT_membership VALUES('MEB08','CUST009','SHORT-TERM',3851837986);
+INSERT INTO ADVAIT_membership VALUES('MEB09','CUST010','PREMIUM',9455532115);
+INSERT INTO ADVAIT_membership VALUES('MEB10','CUST011','SHORT-TERM',7555429480);
+INSERT INTO ADVAIT_membership VALUES('MEB11','CUST012','LIFE-TIME',7555429480);
+INSERT INTO ADVAIT_membership VALUES('MEB12','CUST013','SHORT-TERM',9155587725);
+INSERT INTO ADVAIT_membership VALUES('MEB13','CUST014','PREMIUM',9055568442);
+INSERT INTO ADVAIT_membership VALUES('MEB14','CUST015','SHORT-TERM',9055568442);
+INSERT INTO ADVAIT_membership VALUES('MEB15','CUST016','LIFETIME',8545938389);
+
+
+-- VEHICLE_SERVICE
+
+INSERT INTO ADVAIT_vehicle_service VALUES("4_KIA",'VEH001',CUST001,"SERVICING_DEPT","BANJARA_HILLS,HYD",9856742531,"LAXMI_NARAYANA","CAR_WASH");
+INSERT INTO ADVAIT_vehicle_service VALUES("4_HON",'VEH002',CUST002,"CLEANING_DEPT","BTM,BANGLORE",8756423189,"SHANKAR","VACUMING");
+INSERT INTO ADVAIT_vehicle_service VALUES("4_BMW",'VEH003',CUST003,"WHEELS_DEPT","HSR LAYOUT,BANGLORE",9856745285,"HARISH","TYRE_REPLACE");
+INSERT INTO ADVAIT_vehicle_service VALUES("4_TOY",'VEH004',CUST004,"MECH_DEPT","KOTLA,DELHI",8951742531,"VIJAY","OIL_CHANGE");
+INSERT INTO ADVAIT_vehicle_service VALUES("4_TAT",'VEH005',CUST005,"CORE_DEPT","BANDRA,MUMBAI",6608559574,"ROHIT","ENGINE_UPGRADE");
+INSERT INTO ADVAIT_vehicle_service VALUES("4_AUD",'VEH006',CUST006,"SERVICING_DEPT","JUBLIEE_HILLS,HYD",9856742531,"RAM_NATH","CAR_WASH");
+INSERT INTO ADVAIT_vehicle_service VALUES("4_MAR",'VEH007',CUST007,"CLEANING_DEPT","KUKATPALLY,HYD",9018459689,"TIRUMAL","VACUMING");
+INSERT INTO ADVAIT_vehicle_service VALUES("4_ERT",'VEH008',CUST008,"WHEELS_DEPT","EDEN,KOLKATA",9562897400,"ADITYA","TYRE_RIM");
+INSERT INTO ADVAIT_vehicle_service VALUES("4_FOR",'VEH009',CUST009,"SERVICING_DEPT","HOUSING_BOARD,PUNE",8596147230,"LOKESH","CAR_WASH");
+INSERT INTO ADVAIT_vehicle_service VALUES("4_TES",'VEH010',CUST010,"WHEELS_DEPT","ROCK_GAR,CHANDIGARH",7596842310,"AJAY","TYRE_REPLACE");
+INSERT INTO ADVAIT_vehicle_service VALUES("4_LAM",'VEH011',CUST011,"MECH_DEPT","RING_ROAD,RANCHI",9856742531,"AMOGH","OIL_CHANGE");
+INSERT INTO ADVAIT_vehicle_service VALUES("4_POR",'VEH012',CUST012,"CLEANING_DEPT","SARDAR_STA,AHMEDABAD",6985742310,"VENKAT","VACUMING");
+INSERT INTO ADVAIT_vehicle_service VALUES("4_BEN",'VEH013',CUST013,"SERVICING_DEPT","BANJARA_HILLS,HYD",8529647100,"CHANDHAN","CAR_WASH");
+INSERT INTO ADVAIT_vehicle_service VALUES("4_RAN",'VEH014',CUST014,"MECH_DEPT","ADAYAR,CHENNAI",9856859666,"TANISHQ","OIL_CHANGE");
+INSERT INTO ADVAIT_vehicle_service VALUES("4_BUG",'VEH015',CUST015,"CLEANING_DEPT","ALEPI,KOCHI",7894561230,"ILAMPARITHI","VACUMING");
+INSERT INTO ADVAIT_vehicle_service VALUES("4_ALI",'VEH016',CUST002,"SERVICING_DEPT","BEACH_ROAD,VIZAG",9856742531,"NAVEEN","CAR_WASH");
+
+
+
+-- NOK
+
+INSERT INTO ADVAIT_NOK VALUES('NOK00','AGR001','APP001','CUST401','ANNANYA_MALLAYA','2/129,3RD_PHASE,GOA',8456543981,'UN-MARRIED','F');
+INSERT INTO ADVAIT_NOK VALUES('NOK01','AGR002','APP002','CUST402','DIPA','12/90,4RD_PHASE,PUNE',9873231234,'MARRIED','F');
+INSERT INTO ADVAIT_NOK VALUES('NOK02','AGR003','APP003','CUST403','ADITYA','AKSHAY_COLONY,HUBLI',8656543232,'MARRIED','M');
+INSERT INTO ADVAIT_NOK VALUES('NOK03','AGR004','APP004','CUST404','BHAVNA','BENZ_CIRCLE,GOA',9116542332,'UN-MARRIED','F');
+INSERT INTO ADVAIT_NOK VALUES('NOK04','AGR005','APP005','CUST405','MANOJ','DECENT_ROAD,VIJAYWAD',9381542112,'UN-MARRIED','M');
+INSERT INTO ADVAIT_NOK VALUES('NOK05','AGR006','APP006','CUST406','UPASNA_CHARAN','BANJARA_HILLS,HYD',8781549898,'MARRIED','F');
+INSERT INTO ADVAIT_NOK VALUES('NOK06','AGR007','APP007','CUST407','RAHUL','ADYAR,CHENNAI',8091543625,'UN-MARRIED','M');
+INSERT INTO ADVAIT_NOK VALUES('NOK07','AGR008','APP008','CUST408','JILL_BIDEN','WHITE_HOUSE,USA',8881543999,'MARRIED','F');
+INSERT INTO ADVAIT_NOK VALUES('NOK08','AGR009','APP009','CUST409','ERROL_MUSK','BROWNWOOD,TEXAS',9993241789,'MARRIED','M');
+INSERT INTO ADVAIT_NOK VALUES('NOK09','AGR010','APP010','CUST410','CATHY_ZHANG','ALI_BABA,TAIWAN',8000543789,'MARRIED','F');
+INSERT INTO ADVAIT_NOK VALUES('NOK10','AGR011','APP011','CUST411','BECK_VANCE','KULURU,KURNOOL',7689517539,'MARRIED','F');
+INSERT INTO ADVAIT_NOK VALUES('NOK11','AGR012','APP012','CUST412','FRANK_O_CONNOR','AMSTER,NETHERLANDS',6362297857,'MARRIED','M');
+INSERT INTO ADVAIT_NOK VALUES('NOK12','AGR013','APP013','CUST413','SUSAN_BUFFET','MOUNT_VIEW,COLORADO',6784997167,'UN-MARRIED','F');
+INSERT INTO ADVAIT_NOK VALUES('NOK13','AGR014','APP014','CUST414','AKHIL','KUKATPALLI,GUNTURU',9148934555,'UN-MARRIED','M');
+INSERT INTO ADVAIT_NOK VALUES('NOK14','AGR015','APP015','CUST415','HELEN_WICK','SUWAI,THAIPUR',9845674560,'MARRIED','F');
+INSERT INTO ADVAIT_NOK VALUES('NOK15','AGR016','APP016','CUST416','RUDRA','KRISHNA_COLONY,SGP',9877912365,'UN-MARRIED','M');
+
+
+
+
+-- INSURANCE_COMPANY
+
+INSERT INTO ADVAIT_insurance_company VALUES("AEGON INSURANCE","MAMALLAB_RD,CHENNAI","9786543621",4578567 ,"AEGON@GMAIL.COM","AEGON_LTD.CO.IN" ,"KARNATAKA","TECHNICAL_DEPT","AEGON_BANGALORE");
+INSERT INTO ADVAIT_insurance_company VALUES("AEGON INSURANCE","MAMALLAB_RD,CHENNAI","9786543621",4578567 ,"AEGON@GMAIL.COM","AEGON_LTD.CO.IN" ,"TAMILNADU","REINSURANCE_DEPT","AEGON_CHENNAI");
+INSERT INTO ADVAIT_insurance_company VALUES("AVIVA INSURANCE","MANGAL_CROSS,DELHI","9872543621",4503435 ,"AVIVA@GMAIL.COM","AVIA_LTD.CO.IN" ,"DELHI","PAYMENTS_AND_COMMISN","AVIVA_DEL");
+INSERT INTO ADVAIT_insurance_company VALUES("BAJAJ INSURANCE","KALPASAKI_ST,HYD","9875671203", 4765490,"BAJAJ@GMAIL.COM","BAJAJ_LTD.CO.IN" ,"TELANGANA","PRODUCTION_AND_SALES","BAJAJ_HYD");
+INSERT INTO ADVAIT_insurance_company VALUES("BHARTI INSURANCE","KAMAKSI_ST,VIZAG","9432167120", 4012357,"BHARTI@GMAIL.COM","BHARTI_LTD.CO.IN" ,"ANDHRA","OFFICE_ADMIN_DEPT","BHARTI_VIZAG");
+INSERT INTO ADVAIT_insurance_company VALUES("BIRLA SUN INSURANCE","MARRIPALEM","9343543621",4325432,"BIRLA@GMAIL.COM","BIRLASUN.CO.IN" ,"VISAKHAPATNAM","REINSURANCE_DEPT","BIRLA_VSKP");
+INSERT INTO ADVAIT_insurance_company VALUES("CANARA HSBC","104 AREA,NAD","8789543621",5451232,"CANARA@GMAIL.COM",'CANARA.CO.IN',"GUNTUR","PAYMENTS_AND_COMMISN","CANARA_GUNTUR");
+INSERT INTO ADVAIT_insurance_company VALUES("DHFL PRAMERICA","MAMALLABURAM,ITI","9001543621",6563423,"DHFL@GMAIL.COM","DHFL.CO.IN","ONGOLE","AGENT_RECRUITMENT","DHFL_ONGOLE");
+INSERT INTO ADVAIT_insurance_company VALUES("DHFL PRAMERICA","MAMALLABURAM,ITI","9001543621",6563423,"DHFL@GMAIL.COM","DHFL.CO.IN","GUNTUR","HR_DEPT","DHFL_GUNTURU");
+INSERT INTO ADVAIT_insurance_company VALUES("DHFL PRAMERICA","MAMALLABURAM,ITI","9001543621",6563423,"DHFL@GMAIL.COM","DHFL.CO.IN","COIMBATORE","ADVT_DEPT","DHFL_COIMBATORE");
+INSERT INTO ADVAIT_insurance_company VALUES("EDELWEISS TOKIO","GOPALAPATNAM,BHPV","7895776556",423123,"EDELWEISS@GMAIL.COM","EDELWEISS.CO.IN","VISAKHAPATNAM","PRODUCTION_AND_SALES","ELWEISS_VSKP");
+INSERT INTO ADVAIT_insurance_company VALUES("ICICI PRUDENTIAL","TOKICHOKI_RD,HYD",8621543621,8653306,"ICICI@GMAIL.COM","ICICI.CO.IN" ,"HYDERABAD","RECRUITMENT_DEPT","ICICI_HYD");
+INSERT INTO ADVAIT_insurance_company VALUES("ICICI PRUDENTIAL","TOKICHOKI_RD,HYD",8621543621,8653306,"ICICI@GMAIL.COM","ICICI.CO.IN" ,"BANGLORE","TECHNICAL_DEPT","ICICI_BANG");
+INSERT INTO ADVAIT_insurance_company VALUES("EXIDE LIFE INSURANCE","WALTAIR_RD,VIZAG",8321544620,8153306 ,"EXIDE@GMAIL.COM","EXIDE_LTD.CO.IN","VIZAG","REINSURANCE_DEPT","EXIDE_VIZAG");
+INSERT INTO ADVAIT_insurance_company VALUES("FUTURE GENERALI","KULOOR_RD,MANGLOR",9321743621,7653236,"FUTUREG@GMAIL.COM","FUTURE_G_LTD.CO.IN" ,"MANGLORE","PAYMENT_AND_COMMISN","FUTURE_G_MANGLORE");
+INSERT INTO ADVAIT_insurance_company VALUES("HDFC STANDARD","JEEDIMETLA,HYD",8621540671,9653536,"HDFC@GMAIL.COM","HDFC_LTD.CO.IN","HYDERABAD","OFFICE_ADMIN_DEPT","HDFC_HYDERABAD");
+INSERT INTO ADVAIT_insurance_company VALUES("HDFC STANDARD","JEEDIMETLA,HYD",8621540671,9653536,"HDFC@GMAIL.COM","HDFC_LTD.CO.IN","VIZAG","HR_DEPT","HDFC_VIZAG");
+INSERT INTO ADVAIT_insurance_company VALUES("HDFC STANDARD","JEEDIMETLA,HYD",8621540671,9653536,"HDFC@GMAIL.COM","HDFC_LTD.CO.IN","ANANTPUR","MARKETING_DEPT","HDFC_ANANTPUR");
+INSERT INTO ADVAIT_insurance_company VALUES("IDBI INSURANCE","BENCZ_RD,GUJARATH",9786596842,4534231 ,"IDBI@GMAIL.COM","IDBI_LTD.CO.IN","RAJKOT","OFFICE_ADMIN_DEPT","GUJARATH");
+INSERT INTO ADVAIT_insurance_company VALUES("INDIAFIRST INSUR","SHER_E_COLONY,PUNJAB",9241596842,3434232,"INDIA@GMAIL.COM","INDIA1ST_LTD.CO.IN" ,"JALANDAR","PRODUCTION_AND_SALES","PUNJAB");
+INSERT INTO ADVAIT_insurance_company VALUES("KOTAK INSURANCE","AKSHAY_RD,KARNATAKA",7887234121,42315634,"KOTAK@GMAIL.COM","KOTAK_LTD.CO.IN","HUBLI","AGENT_RECRUITMENT","KARNATAKA");
+INSERT INTO ADVAIT_insurance_company VALUES("DHFL INSURANCE","PURIAPARK,MAHARASTRA",8989761232,3124231,"DHFL@GMAIL.COM","DHFL_LTD.CO.IN","PUNE","PAYMENTS_AND_COMMISN","MAHARASTRA");
+INSERT INTO ADVAIT_insurance_company VALUES("KOTAK INSURANCE","AKSHAY_RD,KARNATAKA",7887234121,42315634,"KOTAK@GMAIL.COM","KOTAK_LTD.CO.IN","DHARWAD","ADVT_DEPT","KARNATAKA");
+
+
+-- POLICY_RENEWABLE
+
+INSERT INTO ADVAIT_policy_renewable VALUES('4PR01','AGR001','APP001','CUST001','2004-02-14','ANNUAL');
+INSERT INTO ADVAIT_policy_renewable VALUES('4PR02','AGR002','APP002','CUST002','2006-04-07','SEMI-ANNUAL');
+INSERT INTO ADVAIT_policy_renewable VALUES('4PR03','AGR003','APP003','CUST003','2003-03-14','ANNUAL');
+INSERT INTO ADVAIT_policy_renewable VALUES('4PR04','AGR004','APP004','CUST004','2014-01-01','SEMI-ANNUAL');
+INSERT INTO ADVAIT_policy_renewable VALUES('4PR05','AGR005','APP005','CUST005','2017-05-10','ANNUAL');
+INSERT INTO ADVAIT_policy_renewable VALUES('4PR06','AGR006','APP006','CUST006','2007-12-14','ANNUAL');
+INSERT INTO ADVAIT_policy_renewable VALUES('4PR07','AGR007','APP007','CUST007','2017-04-09','SEMI-ANNUAL');
+INSERT INTO ADVAIT_policy_renewable VALUES('4PR08','AGR008','APP008','CUST008','2004-01-07','SEMI-ANNUAL');
+INSERT INTO ADVAIT_policy_renewable VALUES('4PR09','AGR009','APP009','CUST009','2007-06-30','ANNUAL');
+INSERT INTO ADVAIT_policy_renewable VALUES('4PR10','AGR010','APP010','CUST010','2013-02-14','SEMI-ANNUAL');
+INSERT INTO ADVAIT_policy_renewable VALUES('4PR11','AGR011','APP011','CUST011','2014-09-23','ANNUAL');
+INSERT INTO ADVAIT_policy_renewable VALUES('4PR12','AGR012','APP012','CUST012','2019-03-15','ANNUAL');
+INSERT INTO ADVAIT_policy_renewable VALUES('4PR13','AGR013','APP013','CUST013','2012-06-10','SEMI-ANNUAL');
+INSERT INTO ADVAIT_policy_renewable VALUES('4PR14','AGR014','APP014','CUST014','2020-02-15','SEMI-ANNUAL');
+INSERT INTO ADVAIT_policy_renewable VALUES('4PR15','AGR015','APP015','CUST015','2022-02-14','ANNUAL');
+INSERT INTO ADVAIT_policy_renewable VALUES('4PR16','AGR016','APP016','CUST016','2024-05-10','ANNUAL');
+
+
+
+-- INCIDENT
+
+INSERT INTO ADVAIT_incident VALUES(40000,"THEFT", "2016-07-16","BIKE FRONT TYRE STOLEN");
+INSERT INTO ADVAIT_incident VALUES(40001,"FIRE", "2002-11-12","CAR ENGINE DAMAGED DUE TO PETROL LEAK FROM ENGINE_TANK");
+INSERT INTO ADVAIT_incident VALUES(40002,"ACCIDENT","2005-12-23","SIDE MIRRORS GOT STOLEN");
+INSERT INTO ADVAIT_incident VALUES(40003,"ACCIDENT","2012-09-21","REAR BUMPER DAMAGED SEVERELY");
+INSERT INTO ADVAIT_incident VALUES(40004,"DAMAGE","2004-08-15","REAR VIEW MIRROR BROKEN");
+INSERT INTO ADVAIT_incident VALUES(40005,"DAMAGE","2005-09-14","FRONT GLASS DAMAGED");
+INSERT INTO ADVAIT_incident VALUES(40006,"THEFT","2006-10-25","ENGINE CHASIS GOT STOLEN");
+INSERT INTO ADVAIT_incident VALUES(40007,"ACCIDENT","2014-11-21","SEVERE DAMAGE AFTER COLLISION WITH LORRY");
+INSERT INTO ADVAIT_incident VALUES(40008,"FIRE","2009-10-15","LORRY FIRED ON COLLISION");
+INSERT INTO ADVAIT_incident VALUES(40009,"THEFT","2010-08-23","FRONT BUMPER GOT STOLEN");
+INSERT INTO ADVAIT_incident VALUES(40010,"THEFT","2015-11-20","LORRY TAIL_LIGHTS GOT STOLEN");
+INSERT INTO ADVAIT_incident VALUES(40011,"ACCIDENT","2016-10-25","BIKE CHAIN BROKEN");
+INSERT INTO ADVAIT_incident VALUES(40012,"DAMAGE","2017-07-12","BIKE SUSPENSION DAMAGED");
+INSERT INTO ADVAIT_incident VALUES(40013,"ACCIDENT","2018-01-22","CAR FRONT SIDE FIRED DUE TO LEAKAGE OF GAS FROM CONDENSER");
+INSERT INTO ADVAIT_incident VALUES(40014,"ACCIDENT","2019-03-23","BIKE FRONT SIDE SEVERELY DAMAGED");
+INSERT INTO ADVAIT_incident VALUES(40015,"FIRE","2019-06-20","BIKE FIRED DUE TO LEAKAGE OF PETROL FROM TANK");
+INSERT INTO ADVAIT_incident VALUES(40016,"ACCIDENT","2019-06-20","VEHICLE LOST ITS SHAPE COMPLETELY");
+INSERT INTO ADVAIT_incident VALUES(40017,"ACCIDENT","2020-06-20","VEHICLE FIRED DUE TO LEAKAGE OF PETROL FROM TANK");
+INSERT INTO ADVAIT_incident VALUES(40018,"ACCIDENT","2017-06-20","VEHICLE FIRED DUE TO LEAKAGE OF PETROL FROM TANK");
+INSERT INTO ADVAIT_incident VALUES(40019,"ACCIDENT","2019-04-20","BIKE FIRED DUE TO LEAKAGE OF PETROL FROM TANK");
+INSERT INTO ADVAIT_incident VALUES(40020,"ACCIDENT","2019-06-25","BIKE FIRED DUE TO LEAKAGE OF PETROL FROM TANK");
+
+
+-- INCIDENT_REPORT
+
+INSERT INTO ADVAIT_incident_report VALUES("4IR_0",40000,CUST001,"SHIVA",5600,"THEFT","BIKE FRONT TYRE STOLEN");
+INSERT INTO ADVAIT_incident_report VALUES("4IR_1",40001,CUST002,"AJAY",11000,"FIRE","CAR ENGINE DAMAGED DUE TO PETROL LEAK FROM ENGINE_TANK");
+INSERT INTO ADVAIT_incident_report VALUES("4IR_2",40002,CUST003,"HARISH",2500,"ACCIDENT","SIDE MIRRORS GOT STOLEN");
+INSERT INTO ADVAIT_incident_report VALUES("4IR_3",40003,CUST004,"HARISH",9500,"ACCIDENT","REAR BUMPER DAMAGED SEVERELY");
+INSERT INTO ADVAIT_incident_report VALUES("4IR_4",40004,CUST005,"TOM_CRUISE",56000,"FIRE","THE BUMPER,HEADLIGHTS,RADIATOR ARE SEVERLY BURNT AND LOST ITS FUNCTIONALLITY COMPLETELY");
+
+INSERT INTO ADVAIT_incident_report VALUES("4IR_5",40005,CUST006,"ANANTH",100000,"ACCIDENT","THE STEERING,GEAR_SYSTEM,FRONT GLASS SHATTERED COMPLETELY,SO ALL HAVE TO BE REPLACED WITH NEW ONE");
+INSERT INTO ADVAIT_incident_report VALUES("4IR_6",40006,CUST007,"KARAN",50000,"DAMAGE","THE BACKSIDE DICKIE IS DAMAGED IN PARKING AREA");
+INSERT INTO ADVAIT_incident_report VALUES("4IR_7",40007,CUST008,"KARTHICK",20000,"THEFT","SMASHED SIDE WINDOWS AND STOLE INSIDE VALUABLE THINGS,GLASSES HAVE BE REPLACED");
+
+INSERT INTO ADVAIT_incident_report VALUES('4IR_8',40008,CUST009,"S_SMITH",820000,"FIRE","THE BUMPER,HEADLIGHTS,RADIATOR ARE SEVERLY BURNT AND LOST ITS FUNCTIONALLITY COMPLETELY");
+INSERT INTO ADVAIT_incident_report VALUES('4IR_9',40009,CUST010,"TOM_CURRAN",520000,"THEFT","EVIDENCE OF THEFT VISIBLE, CAN BE APPROVED");
+INSERT INTO ADVAIT_incident_report VALUES('4IR_10',40010,CUST011,"SAM_CURRAN",56000,"THEFT","TAIL_LIGHTS ARE SEVERLY DAMAGED AND REQUIRE REPLACEMENT");
+INSERT INTO ADVAIT_incident_report VALUES('4IR_11',40011,CUST012,"ALLU_SIRISH",10000,"ACCIDENT","THE CHAINS ARE SEVERLY DAMAGED AND LOST ITS FUNCTIONALLITY COMPLETELY");
+
+INSERT INTO ADVAIT_incident_report VALUES('4IR_12',40012,CUST013,"VINOD_CHAUBEY",76000,'DAMAGE',"BIKE SUSPENSION BLOCKED COMPLETELY");
+INSERT INTO ADVAIT_incident_report VALUES('4IR_13',40013,CUST014,"VIJAY_KUMAR",50000,'ACCIDENT',"GAS LEAKAGE LEAVING CAR'S FRONT SIDE & ENGINE BURNT");
+
+INSERT INTO ADVAIT_incident_report VALUES('4IR_14',40014,CUST015,"KUMAR",11000,'ACCIDENT',"BIKE FRONT SIDE SEVERELY DAMAGED");
+INSERT INTO ADVAIT_incident_report VALUES('4IR_15',40015,CUST016,"JAGADESH",10000,'FIRE',"BIKE FIRED DUE TO LEAKAGE OF PETROL FROM TANK");
+INSERT INTO ADVAIT_incident_report VALUES('4IR_16',40016,CUST002,"JAGADESH",10000,'ACCIDENT',"BIKE FIRED DUE TO LEAKAGE OF PETROL FROM TANK");
+INSERT INTO ADVAIT_incident_report VALUES('4IR_17',40017,CUST003,"JOHNNY",10000,'ACCIDENT',"BIKE FIRED DUE TO LEAKAGE OF PETROL FROM TANK");
+INSERT INTO ADVAIT_incident_report VALUES('4IR_18',40018,CUST011,"KUMAR",10000,'ACCIDENT',"BIKE FIRED DUE TO LEAKAGE OF PETROL FROM TANK");
+INSERT INTO ADVAIT_incident_report VALUES('4IR_19',40019,CUST013"BHANU",10000,'ACCIDENT',"BIKE FIRED DUE TO LEAKAGE OF PETROL FROM TANK");
+INSERT INTO ADVAIT_incident_report VALUES('4IR_20',40020,CUST011,"ESHWAR",10000,'ACCIDENT',"BIKE FIRED DUE TO LEAKAGE OF PETROL FROM TANK");
+
+
+
+-- COVERAGE
+
+INSERT INTO ADVAIT_coverage VALUES('COV01','AEGON INSURANCE',4000,'LIABILITY','BASIC','PRD0','COVERS THE REPAIR/REPLACEMENT COST OF THE DAMAGED PROPERTY','OWNERS HAVE MIN LIABILITY AS PER LEGAL OBLIGATION');
+INSERT INTO ADVAIT_coverage VALUES('COV02','AVIVA INSURANCE',15000,'LIABILITY','COMPLETE','PRD1','COVERS COMPLETE CHECK AND THE REPAIR/REPLACEMENT COST OF THE DAMAGED PROPERTY','OWNERS HAVE MIN LIABILITY AS PER LEGAL OBLIGATION');
+INSERT INTO ADVAIT_coverage VALUES('COV03','BAJAJ INSURANCE',16000,'LIABILITY','SPECIFIC','PRD2','COVERS THE REPAIR/REPLACEMENT COST OF THE SPECIFIC PROPERTY','OWNERS HAVE MIN LIABILITY AS PER LEGAL OBLIGATION');
+INSERT INTO ADVAIT_coverage VALUES('COV04','BHARTI INSURANCE',10000,'COLLISION','BASIC','PRD3','FOR ACCIDENT,COLLISION COVERAGE WILL PAY FOR THE REPAIRS OF THE OWNERS CAR','COLLISION COVER BE TAKEN AS PER AGE OF VEHICLE');
+INSERT INTO ADVAIT_coverage VALUES('COV05','BIRLA SUN INSURANCE',12000,'COLLISION','COMPLETE','PRD4','FOR ACCIDENT,COLLISION COVERAGE WILL PAY FOR THE REPAIRS OF THE OWNERS CAR INCLUDING COMPLETE CHK','COLLISION COVER BE TAKEN AS PER AGE OF VEHICLE');
+INSERT INTO ADVAIT_coverage VALUES('COV06','CANARA HSBC',9000,'COLLISION','SPECIFIC','PRD5','FOR ACCIDENT,COLLISION COVERAGE WILL PAY FOR THE REPAIRS OF THE OWNERS CAR INCLUDING CERTAIN CHKS','COLLISION COVER BE TAKEN AS PER AGE OF VEHICLE');
+INSERT INTO ADVAIT_coverage VALUES('COV07','DHFL PRAMERICA',5370,'PERSON_INJ','BASIC','PRD6','COVERS BASIC MEDICAL EXPENSES, REGARDLESS OF WHO WAS AT FAULT FOR AN ACCIDENT','PROOFS FOR MEDICAL BILLS, HOSPITAL BILLS AND COSTS');
+INSERT INTO ADVAIT_coverage VALUES('COV08','EDELWEISS TOKIO',9000,'PERSON_INJ','COMPLETE','PRD7','COVERS COMPLETE MEDICAL EXPENSES, REGARDLESS OF WHO WAS AT FAULT FOR AN ACCIDENT','PROOFS FOR MEDICAL BILLS, HOSPITAL BILLS AND COSTS');
+INSERT INTO ADVAIT_coverage VALUES('COV09','ICICI PRUDENTIAL',5340,'PERSON_INJ','SPECIFIC','PRD8','COVERS THE SPECIFIED MEDICAL EXPENSES, REGARDLESS OF WHO WAS AT FAULT FOR AN ACCIDENT','PROOFS FOR MEDICAL BILLS, HOSPITAL BILLS AND COSTS');
+INSERT INTO ADVAIT_coverage VALUES('COV10','EXIDE LIFE INSURANCE',5524,'UNINSURED','BASIC','PRD9','IF VEHICLE HIT BY ANOTHER UNINSURED VEHICLE, COMPANY WILL BEAR FOR BASIC REPAIR OF THE VEHICLE.','PROPER PROOF OF DAMAGE OR MEDICAL BILLS NECESSARY');
+INSERT INTO ADVAIT_coverage VALUES('COV11','FUTURE GENERALI',5732,'UNINSURED','COMPLETE','PRD10','IF VEHICLE HIT BY ANOTHER UNINSURED VEHICLE, COMPANY WILL BEAR FOR COMPLETE REPAIR OF THE VEHICLE.','PROPER PROOF OF DAMAGE OR MEDICAL BILLS NECESSARY');
+INSERT INTO ADVAIT_coverage VALUES('COV12','HDFC STANDARD',5635,'UNINSURED','SPECIFIC','PRD11','IF VEHICLE HIT BY ANOTHER UNINSURED VEHICLE, COMPANY WILL BEAR FOR SPECIFIC REPAIRS OF THE VEHICLE.','PROPER PROOF OF DAMAGE OR MEDICAL BILLS NECESSARY');
+INSERT INTO ADVAIT_coverage VALUES('COV13','IDBI INSURANCE',5720,'CMPRHSIVE','BASIC','PRD12','COVERS NATURAL RISK FACTORS DUE TO CALAMITIES AND OTHER THIRD-PARTY RISKS.INCLUDES BASIC CHECK','REQUIREMENT OF DAMAGE LEVEL ABOVE A CERTAIN LIMIT');
+INSERT INTO ADVAIT_coverage VALUES('COV14','INDIAFIRST INSUR',5840,'CMPRHSIVE','COMPLETE','PRD13','COVERS NATURAL RISK FACTORS DUE TO CALAMITIES AND OTHER THIRD-PARTY RISKS.INCLUDES COMPLETE CHECK','REQUIREMENT OF DAMAGE LEVEL ABOVE A CERTAIN LIMIT');
+INSERT INTO ADVAIT_coverage VALUES('COV15','KOTAK INSURANCE',5790,'CMPRHSIVE','SPECIFIC','PRD14','COVERS NATURAL RISK FACTORS DUE TO CALAMITIES AND OTHER THIRD-PARTY RISKS.INCLUDES SPECIFIC CHECKS','REQUIREMENT OF DAMAGE LEVEL ABOVE A CERTAIN LIMIT');
+INSERT INTO ADVAIT_coverage VALUES('COV16','DHFL INSURANCE',5984,'CMPRHSIVE','COMPLETE','PRD15','COVERS NATURAL RISK FACTORS DUE TO CALAMITIES AND OTHER THIRD-PARTY RISKS.INCLUDES COMPLETE CHECK','REQUIREMENT OF DAMAGE LEVEL ABOVE A CERTAIN LIMIT');
+
+
+
+-- PRODUCT
+
+INSERT INTO ADVAIT_product VALUES('PRD001','AEGON INSURANCE',5600,'BIKE FRONT TYRE');
+INSERT INTO ADVAIT_product VALUES('PRD002','AVIVA INSURANCE',11000,'PETROL PUMP');
+INSERT INTO ADVAIT_product VALUES('PRD003','BAJAJ INSURANCE',2500,'SIDE MIRRORS');
+INSERT INTO ADVAIT_product VALUES('PRD004', 'BHARTI INSURANCE',9500,'REAR BUMP');
+INSERT INTO ADVAIT_product VALUES('PRD005','BIRLA SUN INSURANCE',56000,'BUMPERHEADLIGHT');
+INSERT INTO ADVAIT_product VALUES('PRD006', 'CANARA HSBC',100000,'FULL SERVICE');
+INSERT INTO ADVAIT_product VALUES('PRD007', 'DHFL PRAMERICA',50000,'BACK DICKIE');
+INSERT INTO ADVAIT_product VALUES('PRD008','EDELWEISS TOKIO',20000,'SIDE WINDOWS');
+INSERT INTO ADVAIT_product VALUES('PRD009','ICICI PRUDENTIAL',82000,'RADIATOR, BUMPER');
+INSERT INTO ADVAIT_product VALUES('PRD010','EXIDE LIFE INSURANCE',52000,'THEFT');
+INSERT INTO ADVAIT_product VALUES('PRD011','FUTURE GENERALI',56000,'TAIL LIGHTS');
+INSERT INTO ADVAIT_product VALUES('PRD012','HDFC STANDARD',10000,'CHAINS');
+INSERT INTO ADVAIT_product VALUES('PRD013','IDBI INSURANCE',76000,'SUSPENSION');
+INSERT INTO ADVAIT_product VALUES('PRD014','INDIAFIRST INSUR',50000,'GAS PUMP');
+INSERT INTO ADVAIT_product VALUES('PRD015','KOTAK INSURANCE',11000,'BIKE SERVICE');
+INSERT INTO ADVAIT_product VALUES('PRD016','DHFL INSURANCE',10000,'PETROL LEAK');
+INSERT INTO ADVAIT_product VALUES('PRD017','AEGON INSURANCE',100000,'PETROL LEAK');
+INSERT INTO ADVAIT_product VALUES('PRD018','AEGON INSURANCE',20000,'PETROL LEAK');
+INSERT INTO ADVAIT_product VALUES('PRD019','AVIVA INSURANCE',30000,'PETROL LEAK');
+INSERT INTO ADVAIT_product VALUES('PRD020','ICICI PRUDENTIAL',40000,'PETROL LEAK');
+INSERT INTO ADVAIT_product VALUES('PRD021','ICICI PRUDENTIAL',50000,'PETROL LEAK');
+
+
+
+-- RECEIPT
+
+INSERT INTO ADVAIT_receipt VALUES("4RID_1","PRP001","CUST001",4000,"2020-11-14");
+INSERT INTO ADVAIT_receipt VALUES("4RID_2","PRP002","CUST002",3200,"2020-07-11");
+INSERT INTO ADVAIT_receipt VALUES("4RID_3","PRP003","CUST003",2500,"2007-12-06");
+INSERT INTO ADVAIT_receipt VALUES("4RID_4","PRP004","CUST004",8000,"2005-06-29");
+INSERT INTO ADVAIT_receipt VALUES("4RID_5","PRP005","CUST005",12000,"2015-07-05");
+INSERT INTO ADVAIT_receipt VALUES("4RID_6","PRP006","CUST006",5000,"2018-05-07");
+INSERT INTO ADVAIT_receipt VALUES("4RID_7","PRP007","CUST007",2735,"2017-11-26");
+INSERT INTO ADVAIT_receipt VALUES("4RID_8","PRP008","CUST008",3250,"2020-11-14");
+INSERT INTO ADVAIT_receipt VALUES("4RID_9","PRP009","CUST009",9000,"2004-08-18");
+INSERT INTO ADVAIT_receipt VALUES("4RID_10","PRP010","CUST010",8750,"2019-11-12");
+INSERT INTO ADVAIT_receipt VALUES("4RID_11","PRP011","CUST011",4560,"2017-12-21");
+INSERT INTO ADVAIT_receipt VALUES("4RID_12","PRP012","CUST012",7500,"2018-09-01");
+INSERT INTO ADVAIT_receipt VALUES("4RID_13","PRP013","CUST013",6800,"2015-07-05");
+INSERT INTO ADVAIT_receipt VALUES("4RID_14","PRP014","CUST014",9800,"2019-11-12");
+INSERT INTO ADVAIT_receipt VALUES("4RID_15","PRP015","CUST015",9900,"2020-11-14");
+INSERT INTO ADVAIT_receipt VALUES("4RID_16","PRP016","CUST016",2700,"2020-04-14");
+
+
+
+-- INSURANCE_POLICY_COVERAGE
+
+INSERT INTO ADVAIT_insurance_policy_coverage VALUES ('AGT01','COV01');
+INSERT INTO ADVAIT_insurance_policy_coverage VALUES ('AGT02','COV02');
+INSERT INTO ADVAIT_insurance_policy_coverage VALUES ('AGT03','COV03');
+INSERT INTO ADVAIT_insurance_policy_coverage VALUES ('AGT04','COV04');
+INSERT INTO ADVAIT_insurance_policy_coverage VALUES ('AGT05','COV05');
+INSERT INTO ADVAIT_insurance_policy_coverage VALUES ('AGT06','COV06');
+INSERT INTO ADVAIT_insurance_policy_coverage VALUES ('AGT07','COV07');
+INSERT INTO ADVAIT_insurance_policy_coverage VALUES ('AGT08','COV08');
+INSERT INTO ADVAIT_insurance_policy_coverage VALUES ('AGT09','COV09');
+INSERT INTO ADVAIT_insurance_policy_coverage VALUES ('AGT10','COV10');
+INSERT INTO ADVAIT_insurance_policy_coverage VALUES ('AGT11','COV11');
+INSERT INTO ADVAIT_insurance_policy_coverage VALUES ('AGT12','COV12');
+INSERT INTO ADVAIT_insurance_policy_coverage VALUES ('AGT13','COV13');
+INSERT INTO ADVAIT_insurance_policy_coverage VALUES ('AGT14','COV14');
+INSERT INTO ADVAIT_insurance_policy_coverage VALUES ('AGT15','COV15');
+INSERT INTO ADVAIT_insurance_policy_coverage VALUES ('AGT16','COV16');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- additional queries
+ALTER TABLE `vehicle`.`advait_customer` 
+CHANGE COLUMN `cust_mob_number` `cust_mob_number` VARCHAR(10) NOT NULL ;
