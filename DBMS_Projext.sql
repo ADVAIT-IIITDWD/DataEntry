@@ -1079,3 +1079,30 @@ ALTER TABLE `vehicle`.`advait_product`
 ADD CONSTRAINT `fk_company_name5`
   FOREIGN KEY (`company_name`)
   REFERENCES `vehicle`.`advait_insurance_company` (`company_name`);
+  
+  
+  /* QUERIES */
+
+/* 1 */
+
+select c.cust_id, v.vehicle_id from ADVAIT_customer as c, advait_vehicle as v
+where c.cust_id in (select cust_id from advait_claim where calim_status is null);
+
+/* 2 */ 
+
+select c.cust_id from advait_customer as c 
+where c.cust_id in (
+			select cust_id from advait_premium_payment where premium_payment_amount > (
+						select sum(cust_id) from advait_customer));
+                        
+/* 5 */ 
+
+select v.vehicle_type from advait_vehicle as v where v.cust_id in (
+						select cust_id from advait_premium_payment where premium_payment_amount > (
+													select vehicle_number from advait_vehicle));
+
+/* 6 */ 
+
+select * from advait_customer as c where c.cust_id in (select cust_id from advait_claim where claim_amount < (select coverage_amount from advait_coverage) and claim_amount > 
+(select claim_statement_id + vehicle_id + claim_id + cust_id from advait_claim_statement)); 
+
