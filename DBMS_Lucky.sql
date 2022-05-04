@@ -152,7 +152,7 @@ CREATE TABLE `vehicle`.`ADVAIT_staff` (
   `staff_address` VARCHAR(20) NOT NULL,
   `staff_contact` BIGINT NOT NULL UNIQUE,
   `staff_gender` CHAR(2) NOT NULL,
-  `staff_maritial_status` CHAR(8) NOT NULL,
+  `staff_maritial_status` CHAR(15) NOT NULL,
   `staff_nationality` CHAR(15) NOT NULL,
   `staff_qualification` VARCHAR(20) NOT NULL,
   `staff_allowance` INT NOT NULL,
@@ -167,9 +167,9 @@ CREATE TABLE `vehicle`.`ADVAIT_staff` (
 
 
 CREATE TABLE `vehicle`.`ADVAIT_department`(
-    `department_name` VARCHAR(10),
+    `department_name` VARCHAR(20),
     `company_name` VARCHAR(20) NOT NULL ,
-    `office` VARCHAR(10) NOT NULL,
+    `office` VARCHAR(20) NOT NULL,
     `contact_information` VARCHAR(20) NOT NULL,
     `department_staff` VARCHAR(50) NOT NULL,
     `department_leader` VARCHAR(20) NOT NULL,
@@ -182,7 +182,7 @@ CREATE TABLE `vehicle`.`ADVAIT_department`(
 
 CREATE TABLE `vehicle`.`ADVAIT_office`(
     `office_name` VARCHAR(20),
-    `department_name` VARCHAR(10) NOT NULL ,
+    `department_name` VARCHAR(20) NOT NULL ,
     `company_name` VARCHAR(20) NOT NULL,
     `office_leader` VARCHAR(10) NOT NULL,
     `contact_information` VARCHAR(20) NOT NULL,
@@ -218,7 +218,7 @@ CREATE TABLE `vehicle`.`ADVAIT_vehicle_service` (
   `vehicle_service` VARCHAR(20) NOT NULL,
   `vehicle_id` VARCHAR(20) NOT NULL,
   `cust_id` INT NOT NULL,
-  `department_name` CHAR(20) NOT NULL,
+  `department_name` VARCHAR(20) NOT NULL,
   `vehicle_service_address` VARCHAR(20) NOT NULL,
   `vehicle_sevice_contact` VARCHAR(20) NOT NULL,
   `vehicle_service_incharge` CHAR(20) NOT NULL,
@@ -914,7 +914,7 @@ ALTER TABLE `vehicle`.`advait_staff`
 CHANGE COLUMN `staff_contact` `staff_contact` VARCHAR(20) NOT NULL ;
 
 ALTER TABLE `vehicle`.`advait_staff` 
-CHANGE COLUMN `staff_maritial_status` `staff_maritial_status` CHAR(10) NOT NULL ;
+CHANGE COLUMN `staff_maritial_status` `staff_maritial_status` CHAR(15) NOT NULL ;
 
 ALTER TABLE `vehicle`.`advait_office` 
 DROP FOREIGN KEY `fk_department_name`;
