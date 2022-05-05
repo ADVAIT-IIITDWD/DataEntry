@@ -841,7 +841,10 @@ SELECT c.cust_id, v.vehicle_id FROM ADVAIT_customer C, ADVAIT_vehicle V WHERE V.
 
 
 /* 2 */ 
-
+select c.* from advait_customer as c 
+where c.cust_id in (
+			select cust_id from advait_premium_payment where premium_payment_amount > (
+						select sum(cust_id) from advait_customer));
 
 
 /* 3 */
