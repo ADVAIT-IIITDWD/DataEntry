@@ -386,7 +386,7 @@ INSERT INTO ADVAIT_customer VALUES("008","Tarun","Sharma","1944-11-07","M","WHIT
 INSERT INTO ADVAIT_customer VALUES("009","Hitarth","Vyas","1976-03-14","M","SEA_ATTLE,CALIFORNIA","9991543789","Hitarth@GMAIL.COM","1594-7342-8971","MARRIED",90356322);
 INSERT INTO ADVAIT_customer VALUES("010","Tanzeem","Khan","1971-07-19","M","ALI_BABA,TAIWAN","8011543789","Tanzeem@GMAIL.COM","4951-7342-8971","MARRIED",45546322);
 INSERT INTO ADVAIT_customer VALUES("011","Ashley","Vance","1985-06-24","M","KULURU,KURNOOL","7689543789","VANCE@GMAIL.COM","9148-9833-8971","UNMARRIED",74348765);
-INSERT INTO ADVAIT_customer VALUES("012","Ayn","Rand","1956-09-11","F","AMSTER,NETHERLANDS","6362297167","RAND@GMAIL.COM","7167-2363-8971","UNMARRIED",54679723);
+INSERT INTO ADVAIT_customer VALUES("012","Ayan","Khan","1956-09-11","F","AMSTER,NETHERLANDS","6362297167","AYAN@GMAIL.COM","7167-2363-8971","UNMARRIED",54679723);
 INSERT INTO ADVAIT_customer VALUES("013","Warren","Buffet","1953-05-17","M","MOUNT_VIEW,COLORADO","7854997167","BUFFET@GMAIL.COM","1689-3254-2546","MARRIED",46579723);
 INSERT INTO ADVAIT_customer VALUES("014","Priya","Singh","1978-09-25","F","KUKATPALLI,GUNTURU","9148934896","priya@GMAIL.COM","8619-5234-4256","MARRIED",46579765);
 INSERT INTO ADVAIT_customer VALUES("015","John","Wick","2000-09-12","M","SUWAI,THAIPUR","9845671230","WICK@GMAIL.COM","8921-2564-3567","UNMARRIED",70079007);
@@ -844,11 +844,20 @@ SELECT c.cust_id, v.vehicle_id FROM ADVAIT_customer C, ADVAIT_vehicle V WHERE V.
 
 
 /* 2 */ 
+/* M-1 */
 	select * from advait_customer
 join advait_premium_payment 
 	on advait_customer.cust_id=advait_premium_payment .cust_id
 where 
 	advait_premium_payment .premium_payment_amount> (select sum(advait_customer.cust_id) from advait_customer);
+
+/* M-2 */
+select c.* from advait_customer as c
+where c.cust_id in (
+select cust_id from advait_premium_payment where premium_payment_amount > (
+select sum(cust_id) from advait_customer));
+
+
 
 /* 3 */
 SELECT C.COMPANY_NAME FROM advait_INSURANCE_COMPANY C INNER JOIN advait_PRODUCT P ON P.COMPANY_NAME=C.COMPANY_NAME GROUP BY P.COMPANY_NAME
